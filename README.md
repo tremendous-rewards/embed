@@ -69,7 +69,7 @@ You can get started immediately with your integration using our sandbox environm
 
 ### JWT
 
-Each redeem call must include a unique JWT (json web token).  Through the JWT standard (RFC 7519), we can secure this client and ensure that the order JSON from your server is never adjusted by the front-nd.
+Each redeem call must include a JWT (json web token).  Through the JWT standard (RFC 7519), we can secure this client and ensure that the order JSON from your server is never adjusted by the frontend.
 
 You should create a JWT within your backend and pass it to the `reward.open` method as the first paramter.  You can find a JWT library at [https://jwt.io](https://jwt.io).
 
@@ -110,7 +110,7 @@ Triggered when the user completes their redemption selection. The object passed 
 
 When a reward is created through the embed client, a final approval step must be taken on the backend via the REST API to activate the reward. The Reward Approval endpoint requires the ID passed back via this success callback.
 
-[See REST documentation](https://www.tremendous.com/docs).
+[Check out the REST docs](https://www.tremendous.com/docs)
 
 #### onError
 
@@ -125,4 +125,4 @@ Triggered when the user manually closes the redemption screen or when the SDK pr
 
 The payload to create a Reward (encrypted as a JWT) should conform to that same data structure as the REST API.
 
-[See REST documentation](https://www.tremendous.com/docs).
+[Check out the REST docs](https://www.tremendous.com/docs)
