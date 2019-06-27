@@ -52,7 +52,7 @@ You can get started immediately with your integration using our sandbox environm
           onError: function(err) {
             console.log(err);
           },
-          onSuccess: function(reward) {
+          onRedeem: function(reward) {
             request("POST", "/rewards", { reward: reward }, function() {
               console.log("success")
             })
@@ -104,9 +104,9 @@ When a previously used `external_id` is detected, the embed client will instead 
 
 Triggered when the client is successfully mounted.  Passed a single config object to the handler as a parameter.
 
-#### onSuccess
+#### onRedeem
 
-Triggered when the user completes their redemption selection. The object passed to the onSuccess handler will contain an `id` property which is the ID of the reward within the Tremendous system.
+Triggered when the user completes their redemption selection. The object passed to the onRedeem handler will contain an `id` property which is the ID of the reward within the Tremendous system.
 
 When a reward is created through the embed client, a final approval step must be taken on the backend via the REST API to activate the reward. The Reward Approval endpoint requires the ID passed back via this success callback.
 
