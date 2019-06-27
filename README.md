@@ -1,17 +1,13 @@
 ### Tremendous Embed
 -----
 
-Add flexible payouts to your application with a few lines of javascript.
-
 ### Overview
 
-The Tremendous Embed client SDK is the easiest way to add rewards and incentives to your product, while maintaining control of your user experience.
-
-Within your application, end-users are presented with a white-labeled interface wherein they can choose to receive funds from among a wide set of options.
+The Tremendous Embed client SDK is the easiest way to add rewards and incentives to your product, while maintaining control of your user experience. Within your application, end-users are presented with a white-labeled interface wherein they can choose to receive funds from among a wide set of options.
 
 ### Access
 
-You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
+You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com) to grab your API access tokens.
 
 
 ### Integration
@@ -99,9 +95,9 @@ Using the Ruby JWT libray, the tokenize call looks like the following:
 
 ### Create vs. Retrieve Reward
 
-Each JWT should be uniquely associated with a single reward in your system. This can be achieved by passing a unique `external_id` with each payload. For a fresh JWT which has not yet been redeemed, the embed client `reward` call will initiate a new redemption flow.
+Each JWT should be uniquely associated with a single reward in your system. This can be achieved by passing a unique `external_id` with each payload. For a fresh JWT which has not yet been redeemed, the embed client `reward.open` call will initiate a new redemption flow.
 
-When an existing JWT is detected (a completed redemption already exists for this token), the embed client will instead open the redemption details view on the `reward` call so that your end-user can retrieve their historical information (i.e. what is the gift card code or the bank account to which I sent my funds).
+When a previously used `external_id` is detected, the embed client will instead open the details view on the `reward.open` call so that your end-user can retrieve their historical information (i.e. the gift card code associated with this reward).
 
 
 #### onLoad
@@ -114,7 +110,7 @@ Triggered when the user completes their redemption selection. The object passed 
 
 When a reward is created through the embed client, a final approval step must be taken on the backend via the REST API to activate the reward. The Reward Approval endpoint requires the ID passed back via this success callback.
 
-[(See the REST documentation)](https://www.tremendous.com/docs).
+[See REST documentation](https://www.tremendous.com/docs).
 
 #### onError
 
@@ -122,11 +118,11 @@ Triggered on any error within the client.  An error object is passed to the hand
 
 #### onExit
 
-Triggered when the user manually closes the client.
+Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
 
 
 ## REST API Integration
 
 The payload to create a Reward (encrypted as a JWT) should conform to that same data structure as the REST API.
 
-[(See the REST documentation)](https://www.tremendous.com/docs).
+[See REST documentation](https://www.tremendous.com/docs).
