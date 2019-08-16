@@ -85,7 +85,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 The payload to create a Reward in the client should mirror that used in the [REST API](https://www.tremendous.com/docs).
 
 
-### JWT encoded reward
+## JWT encoded reward
 
 When a reward is generated on the front end, execution is paused until it is approved
 via the `Approve` REST endpoint. For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
@@ -115,6 +115,8 @@ Below is a Ruby implementation of JWT. Libraries are available in many other lan
 
 Each reward should be uniquely associated with a single reward in your backend datastore. To prevent any possible duplication, this can be achieved by passing a unique `external_id` with each order payload.
 
+
+### Events
 
 #### onLoad
 
