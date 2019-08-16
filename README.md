@@ -7,8 +7,11 @@ The Tremendous Embed client SDK is the easiest way to add rewards and incentives
 
 ### Access
 
-You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com) to grab your API access tokens.
+You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
+To generate your tokens, you'll navigate to Settings > API.  You will need to generate both a REST API Key and a Developer App to grab your public key which you will add to the client as the `TREMENDOUS_PUBLIC_DEVELOPER_KEY`.
+
+![API Page](./sandbox.png?raw=true)
 
 ### Integration
 
