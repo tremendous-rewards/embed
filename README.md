@@ -3,7 +3,7 @@
 
 ### Overview
 
-The Tremendous Embed client SDK is the easiest way to add rewards and incentives to your product, while maintaining control of your user experience. Within your application, end-users are presented with a white-labeled interface wherein they can choose to receive funds from among a wide set of options.
+The Tremendous Embed SDK is the easiest way to add rewards and incentives to your application, while maintaining control of your user experience. Within your application, end-users are presented with a white-labeled interface wherein they can choose to receive funds from among a wide catalog of options (.
 
 ### Access
 
@@ -82,17 +82,13 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 
 ## Reward Create Parameters
 
-The payload to create a Reward should conform to that same data structure as the REST API.
-
-[Check out the REST docs](https://www.tremendous.com/docs)
+The payload to create a Reward in the client should mirror that used in the [REST API](https://www.tremendous.com/docs).
 
 
 ### JWT encoded reward
 
 When a reward is generated on the front end, execution is paused until it is approved
-via the `Approve` REST endpoint.
-
-For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
+via the `Approve` REST endpoint. For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
 
 To fulfill the reward, you will need to complete the following steps:
 
@@ -102,14 +98,14 @@ To fulfill the reward, you will need to complete the following steps:
 4. Issue a `POST` request to the [Reward Approve endpoint](https://www.tremendous.com/docs) using the Reward ID
 
 
-Below is a Ruby implementation of JWT.
+Below is a Ruby implementation of JWT. Libraries are available in many other languages [see here](https://jwt.io/).
 
 ```ruby
   require 'jwt'
 
   // We encrypt the token using our private REST access token (retrievable in the dashboard)
   token = JWT.decode(
-    token,
+    encoded_token,
     "[TREMENDOUS_REST_ACCESS_TOKEN]",
     'HS256'  # Cryptographically sign with HS256 - HMAC using SHA-256 hash algorithm
   )
@@ -117,7 +113,7 @@ Below is a Ruby implementation of JWT.
 
 ### Prevent Duplication
 
-Each JWT should be uniquely associated with a single reward in your system. This can be achieved by passing a unique `external_id` with each payload.
+Each reward should be uniquely associated with a single reward in your backend datastore. To prevent any possible duplication, this can be achieved by passing a unique `external_id` with each order payload.
 
 
 #### onLoad
@@ -126,11 +122,9 @@ Triggered when the client is successfully mounted.  Passed a single config objec
 
 #### onRedeem
 
-Triggered when the user completes their redemption selection. The object passed to the onRedeem handler will contain an `id` property which is the ID of the reward within the Tremendous system.
+Triggered when the user completes their redemption selection. The argument passed to the onRedeem handler is a JWT representing the generated reward.
 
-When a reward is created through the embed client, a final approval step must be taken on the backend via the REST API to activate the reward. The Reward Approval endpoint requires the ID passed back via this success callback.
-
-[Check out the REST docs](https://www.tremendous.com/docs)
+When a reward is created through this client, a final approval step must be taken on the backend via the REST API.
 
 #### onError
 
