@@ -16,7 +16,7 @@ You can get started immediately with your integration using our sandbox environm
 #### Add the client script to your webpage
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.0.0/client.js" />
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.1.0/client.js" />
 ```
 
 #### Launch the rewards modal
@@ -26,22 +26,31 @@ You can get started immediately with your integration using our sandbox environm
 
 <script type="text/javascript">
   $(function() {
-    var client = Tremendous("[TREMENDOUS_PUBLIC_KEY]", {
+    var client = Tremendous("[TREMENDOUS_PUBLIC_DEVELOPER_KEY]", {
       domain: Tremendous.domains.SANDBOX
     });
 
     function redeem() {
 
-      var request = function (method, url, data, cbk) {
-        return $.ajax({
-          method: method,
-          url: url,
-          data: data
-        }).done(cbk);
-      };
+      var order = {
+        payment: {
+          funding_source_id: "[YOUR_FUNDING_SOURCE_ID]",
+        },
+        reward: {
+          value: {
+            denomination: 25,
+            currency_code: "USD"
+          },
+          products: "[Array of products available such as Amazon, Visa, etc. (see products REST endpoint)]",
+          recipient: {
+            name: "Recipient Name",
+            email: "recipientgoeshere@gmail.com"
+          }
+        }
+      }
 
-      client.reward.open(
-        "[REWARD_JWT]",
+      client.reward.create(
+        order,
         {
           onLoad: function() {
             console.log("It Loaded");
@@ -52,13 +61,14 @@ You can get started immediately with your integration using our sandbox environm
           onError: function(err) {
             console.log(err);
           },
-          onRedeem: function(reward) {
-            request("POST", "/rewards", { reward: reward }, function() {
-              console.log("success")
-            })
+          onRedeem: function(encodedReward) {
+            // Send this JWT encoded token to backend
+            // decode it and approve the reward via the APPROVE REST endpoint.
+            console.log(encodedReward);
           }
         }
       );
+
     }
 
     $("#launchpad").on("click", redeem);
@@ -67,37 +77,44 @@ You can get started immediately with your integration using our sandbox environm
 </script>
 ```
 
-### JWT
+## Reward Create Parameters
 
-Each redeem call must include a JWT (json web token).  Through the JWT standard (RFC 7519), we can secure this client and ensure that the order JSON from your server is never adjusted by the frontend.
+The payload to create a Reward should conform to that same data structure as the REST API.
 
-You should create a JWT within your backend and pass it to the `reward.open` method as the first paramter.  You can find a JWT library at [https://jwt.io](https://jwt.io).
+[Check out the REST docs](https://www.tremendous.com/docs)
 
-Using the Ruby JWT libray, the tokenize call looks like the following:
+
+### JWT encoded reward
+
+When a reward is generated on the front end, execution is paused until it is approved
+via the `Approve` REST endpoint.
+
+For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
+
+To fulfill the reward, you will need to complete the following steps:
+
+1. Pass this token to your backend
+2. Decode the token using your private REST access token and the SHA-256 hash algorithm (see example below)
+3. Validate that the user is entitled to the reward with the given attributes (i.e. the denomination and currency code)
+4. Issue a `POST` request to the [Reward Approve endpoint](https://www.tremendous.com/docs) using the Reward ID
+
+
+Below is a Ruby implementation of JWT.
 
 ```ruby
   require 'jwt'
 
-  payload = {
-    recipient: {
-      name: "[RECIPIENT_NAME]",  # Optional: string
-      email: "[RECIPIENT_EMAIL]",  # Optional: string
-    }
-  }
-
   // We encrypt the token using our private REST access token (retrievable in the dashboard)
-  token = JWT.encode(
-    payload,
+  token = JWT.decode(
+    token,
     "[TREMENDOUS_REST_ACCESS_TOKEN]",
     'HS256'  # Cryptographically sign with HS256 - HMAC using SHA-256 hash algorithm
   )
 ```
 
-### Create vs. Retrieve Reward
+### Prevent Duplication
 
-Each JWT should be uniquely associated with a single reward in your system. This can be achieved by passing a unique `external_id` with each payload. For a fresh JWT which has not yet been redeemed, the embed client `reward.open` call will initiate a new redemption flow.
-
-When a previously used `external_id` is detected, the embed client will instead open the details view on the `reward.open` call so that your end-user can retrieve their historical information (i.e. the gift card code associated with this reward).
+Each JWT should be uniquely associated with a single reward in your system. This can be achieved by passing a unique `external_id` with each payload.
 
 
 #### onLoad
@@ -120,9 +137,3 @@ Triggered on any error within the client.  An error object is passed to the hand
 
 Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
 
-
-## REST API Integration
-
-The payload to create a Reward (encrypted as a JWT) should conform to that same data structure as the REST API.
-
-[Check out the REST docs](https://www.tremendous.com/docs)
