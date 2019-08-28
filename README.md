@@ -19,7 +19,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 #### Add the client script to your webpage
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.2.0/client.js" />
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.3.0/client.js" />
 ```
 
 #### Launch the rewards modal
