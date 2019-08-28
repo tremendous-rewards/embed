@@ -19,7 +19,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 #### Add the client script to your webpage
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.1.0/client.js" />
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.2.0/client.js" />
 ```
 
 #### Launch the rewards modal
@@ -44,6 +44,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
             denomination: 25,
             currency_code: "USD"
           },
+          campaign_id: "[OPTIONAL_CAMPAIGN_ID]",
           products: "[Array of products available such as Amazon, Visa, etc. (see products REST endpoint)]",
           recipient: {
             name: "Recipient Name",
