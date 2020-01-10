@@ -22,7 +22,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 <script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.3.0/client.js" />
 ```
 
-#### Launch the rewards modal
+#### Create a reward in the client
 
 ```html
 <div id="launchpad">Click me to redeem</div>
@@ -84,6 +84,46 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 ## Reward Create Parameters
 
 The payload to create a Reward in the client should mirror that used in the [REST API](https://www.tremendous.com/docs).
+
+
+#### Create a reward on backend and display in the client
+
+```html
+<div id="launchpad">Click me to redeem</div>
+
+<script type="text/javascript">
+  $(function() {
+    var client = Tremendous("[TREMENDOUS_PUBLIC_DEVELOPER_KEY]", {
+      domain: Tremendous.domains.SANDBOX
+    });
+
+    function redeem() {
+
+      client.reward.open(
+      "[EXTERNAL_ID used to create reward from REST API]",
+        {
+          onLoad: function() {
+            console.log("It Loaded");
+          },
+          onExit: function() {
+            console.log("It Closed");
+          },
+          onError: function(err) {
+            console.log(err);
+          },
+          onRedeem: function(encodedReward) {
+            console.log(encodedReward);
+          }
+        }
+      );
+
+    }
+
+    $("#launchpad").on("click", redeem);
+  });
+
+</script>
+```
 
 
 ## JWT encoded reward
