@@ -34,6 +34,8 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
     });
 
     function redeem() {
+      // This payload to create a Reward in the client 
+      // should mirror that used in the [REST API](https://www.tremendous.com/docs).
 
       var order = {
         payment: {
@@ -80,10 +82,6 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
 
 </script>
 ```
-
-## Reward Create Parameters
-
-The payload to create a Reward in the client should mirror that used in the [REST API](https://www.tremendous.com/docs).
 
 
 #### Create a reward on backend and display in the client
