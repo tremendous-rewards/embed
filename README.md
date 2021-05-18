@@ -3,13 +3,13 @@
 
 ### Overview
 
-The Tremendous Embed SDK is the easiest way to add rewards and incentives to your application, while maintaining control of your user experience. Within your application, end-users are presented with a white-labeled interface wherein they can choose to receive funds from among a wide catalog of options (.
+The Tremendous Embed SDK is the easiest way to add rewards and incentives to your application, while maintaining control of your user experience. Within your application, end-users are presented with a white-label interface wherein they can choose to receive funds from among a wide catalog of options.
 
 ### Access
 
 You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
-To generate your tokens, you'll navigate to Settings > API.  You will need to generate both a REST API Key and a Developer App to grab your public key which you will add to the client as the `TREMENDOUS_PUBLIC_DEVELOPER_KEY`.
+To generate your tokens, you'll navigate to Team Settings > Developers.  You will need to generate both a REST API Key and a Developer App. The public key from the Developer App will be added to your client as the `TREMENDOUS_PUBLIC_DEVELOPER_KEY`.
 
 ![API Page](./sandbox.png?raw=true)
 
@@ -34,7 +34,7 @@ To generate your tokens, you'll navigate to Settings > API.  You will need to ge
     });
 
     function redeem() {
-      // This payload to create a Reward in the client 
+      // This payload to create a Reward in the client
       // should mirror that used in the [REST API](https://www.tremendous.com/docs).
 
       var order = {
@@ -142,7 +142,7 @@ Below is a Ruby implementation of JWT. Libraries are available in many other lan
 ```ruby
   require 'jwt'
 
-  // We encrypt the token using our private REST access token (retrievable in the dashboard)
+  # We encrypt the token using our private REST access token (retrievable in the dashboard)
   token = JWT.decode(
     encoded_token,
     "[TREMENDOUS_REST_ACCESS_TOKEN]",
@@ -157,21 +157,21 @@ Each reward should be uniquely associated with a single reward in your backend d
 
 ### Events
 
-#### onLoad
+#### `onLoad`
 
 Triggered when the client is successfully mounted.  Passed a single config object to the handler as a parameter.
 
-#### onRedeem
+#### `onRedeem`
 
 Triggered when the user completes their redemption selection. The argument passed to the onRedeem handler is a JWT representing the generated reward.
 
 When a reward is created through this client, a final approval step must be taken on the backend via the REST API.
 
-#### onError
+#### `onError`
 
 Triggered on any error within the client.  An error object is passed to the handler as a parameter.
 
-#### onExit
+#### `onExit`
 
 Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
 
