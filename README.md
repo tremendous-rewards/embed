@@ -20,6 +20,9 @@ To generate your tokens, you'll navigate to Team Settings > Developers.  You wil
 
 ```html
 <script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.3.0/client.js" />
+
+<!-- Not required if you already have jquery available. -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" />
 ```
 
 #### Create a reward in the client
