@@ -12,7 +12,7 @@ class TremendousAPI
   headers "Authorization" => "Bearer #{ENV['TREMENDOUS_API_KEY']}"
 end
 
-#
+# Homepage
 get '/' do
   haml :home
 end
@@ -64,7 +64,11 @@ get '/pre-created' do
   reward_id = created_order['rewards'].first['id']
 
   # Create the reward in real time here.
-  haml :pre_created, locals: { tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'], reward_id: reward_id, created_order: JSON.pretty_generate(created_order) }
+  haml :pre_created, locals: {
+    tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
+    reward_id: reward_id,
+    created_order: JSON.pretty_generate(created_order)
+  }
 end
 
 # The real-time implementation of the embed
