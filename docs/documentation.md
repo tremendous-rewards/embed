@@ -7,7 +7,7 @@ You can get started immediately with your integration using our sandbox environm
 
 To generate your API key, you'll navigate to Team Settings > Developers. You will need to create both an API Key and a Developer App. The client_id from the Developer App will be added to your client as the `TREMENDOUS_CLIENT_ID`.
 
-![API Page](./sandbox.png?raw=true)
+![API Page](./images/sandbox-keys.png?raw=true)
 
 ### Production
 Before turning on production, please send an email to clients@tremendous.com outlining your use case. Tremendous needs to approve your production account for whitelabel functionality before this will work correctly.
