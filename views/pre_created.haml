@@ -1,0 +1,51 @@
+!!!
+%html
+  %head
+    %script{type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"}
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
+    %title Pre-created reward example | Tremendous Embed
+
+  %body
+    %a{href: "/"} Home
+    %h1 Embed for a previously created reward
+    %p This page demonstrates a reward that was created previously via an API call.
+    %p
+      During the server-side code to generate this page, the server
+      the server created a reward from the Tremendous API.
+      Here's the order object:
+    %pre
+      = created_order
+    %a#launchpad{href: '#'}
+      Click me to redeem
+
+    :javascript
+      $(function() {
+        var client = Tremendous("#{tremendous_client_id}", {
+          domain: Tremendous.domains.SANDBOX
+        });
+
+        function redeem() {
+          client.reward.open(
+            // reward ID.
+            "#{reward_id}",
+            {
+              onLoad: function() {
+                console.log("User loaded modal");
+              },
+              onExit: function() {
+                console.log("User exited modal");
+              },
+              onError: function(err) {
+                console.log(err);
+              },
+              onRedeem: function(encodedReward) {
+                // Approval not required here, since the reward was created via the API.
+                console.log("User redeemed");
+              }
+            }
+          );
+
+        }
+
+        $("a#launchpad").on("click", redeem);
+      });

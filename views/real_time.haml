@@ -1,0 +1,68 @@
+!!!
+%html
+  %head
+    %script{type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"}
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
+    %title Reward created in real-time example | Tremendous Embed
+
+  %body
+    %a{href: "/"} Home
+    %h1 Embed for an uncreated reward
+    %p This demonstrates the flow for a reward that hasn't been created yet. The reward is created in real-time via the embed after the recipient redeems. It requires approval by your application.
+    %a#launchpad{href: '#'}
+      Click me to redeem
+
+    :javascript
+      $(function() {
+        var client = Tremendous("#{tremendous_client_id}", {
+          domain: Tremendous.domains.SANDBOX
+        });
+
+        function redeem() {
+          // This payload to create a Reward in the client
+          // should mirror that used in the [REST API](https://www.tremendous.com/docs).
+          var order = {
+            payment: {
+              funding_source_id: "#{funding_source_id}",
+            },
+            reward: {
+              value: {
+                denomination: 25,
+                currency_code: "USD"
+              },
+              products: #{product_ids.inspect},
+              recipient: {
+                name: "Foo Bar",
+                email: "foo-bar@example.com"
+              }
+            }
+          }
+
+          client.reward.create(
+            order,
+            {
+              onLoad: function() {
+                console.log("User loaded modal");
+              },
+              onExit: function() {
+                console.log("User exited modal");
+              },
+              onError: function(err) {
+                console.log(err);
+              },
+              onRedeem: function(encodedReward) {
+                console.log("User redeemed");
+                console.log(encodedReward);
+                // Send this JWT encoded token to backend
+                // decode it and approve the reward via the APPROVE REST endpoint.
+                $.post('/approve-reward', {jwt: encodedReward}, function() {
+                  alert( "Reward approved on server.");
+                });
+              }
+            }
+          );
+
+        }
+
+        $("a#launchpad").on("click", redeem);
+      });
