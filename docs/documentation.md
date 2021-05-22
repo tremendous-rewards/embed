@@ -2,17 +2,20 @@
 
 ## Access
 
-### Sandbox
+### API keys
 You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
-To generate your API key, you'll navigate to Team Settings > Developers. You will need to create both an API Key and a Developer App. The client_id from the Developer App will be added to your client as the `TREMENDOUS_CLIENT_ID`.
+To generate your API key, you'll navigate to Team Settings > Developers. You will need to create both an API Key and a Developer App. The `client_id` from the Developer App will be added to your client as the `TREMENDOUS_CLIENT_ID`.
 
 ![API Page](./images/sandbox-keys.png?raw=true)
 
-### Production
-Before turning on production, please send an email to clients@tremendous.com outlining your use case. Tremendous needs to approve your production account for whitelabel functionality before this will work correctly.
+Production keys are in the same place in the production environment.
 
-### Required scripts
+### Request whitelabel access
+
+Please contact clients@tremendous.com before starting to integrate. The Tremendous team needs to turn on a configuration for your account enabling whitelabel functionality in order for everything to work correctly.
+
+## Required scripts
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN. You'll also need to add jQuery.
 
 ```html
@@ -23,7 +26,9 @@ In order to render the embed, you'll need to include a link to the tremendous em
 ```
 
 
-## Integration: Previously created rewards
+## Integration
+
+### Previously created rewards
 
 This integration is useful when you have already created a link reward, and want the recipient to redeem on your site. It requires less configuration.
 
@@ -67,13 +72,13 @@ This integration is useful when you have already created a link reward, and want
 ```
 
 
-## Integration: Uncreated rewards
+### Uncreated rewards
 
 If you have rewards that haven't been created yet, you can create them just-in-time using the SDK. Tremendous creates the order at the moment when your recipient makes their reward selection.
 
 This approach requires more configuration, as rewards will have to be approved by your server.
 
-### Create a reward in the client
+#### Create a reward in the client
 
 ```html
 <div id="launchpad">Click me to redeem</div>
@@ -136,7 +141,7 @@ This approach requires more configuration, as rewards will have to be approved b
 ```
 
 
-### Approving rewards
+#### Approving rewards
 
 When a reward is generated using this approach, execution is paused until it is approved via the `Approve` REST endpoint. For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
 
@@ -160,7 +165,7 @@ Below is a Ruby implementation of JWT. Libraries are available in many other lan
   )
 ```
 
-### Preventing Duplication
+#### Preventing Duplication
 
 Each reward should be uniquely associated with a single reward in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order. This is usually tied to some unique identifier for each reward in your codebase. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
 
