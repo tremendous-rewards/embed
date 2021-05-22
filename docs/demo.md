@@ -4,7 +4,7 @@ Included is a small Ruby application showcasing the embed.
 
 ## Setup
 
-1. Clone the repo
+1. Clone this repo
 
 ```sh
 $ git clone git@github.com:tremendous-rewards/embed.git

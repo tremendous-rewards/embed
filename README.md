@@ -9,5 +9,4 @@ We've included two things in this repo that will help you get set up:
 
 If you have questions about integrating, reach out to us at developers@tremendous.com
 
-
 ![Embed Demo](/images/example.png)
