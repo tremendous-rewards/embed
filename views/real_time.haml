@@ -1,8 +1,7 @@
 !!!
 %html
   %head
-    %script{type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"}
-    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
+    -# %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
     %title Reward created in real-time example | Tremendous Embed
 
   %body
@@ -13,7 +12,221 @@
       Click me to redeem
 
     :javascript
-      $(function() {
+      (function(window) {
+
+        // Hack to disable scrolling in mobile without requiring
+        // gymnastics from those implementing this client.
+        // We display: none all top level children of body while the modal
+        // is open in mobile and then restore to original display state on close.
+        // Mobile safari does not respect overflow: hidden on the body element.
+        // It appears as though the body position must be set to fixed or absolute.
+        // However, that is not a requirement that we want to impose on third-party apps.
+        function detectmob() {
+          return window.innerWidth <= 800 && window.innerHeight <= 600;
+        }
+
+        function preventMobileScroll(isMobile) {
+          if (isMobile) {
+            var children = document.body.children;
+            for (var i=0; i < children.length; i++) {
+              var child = children[i];
+              if (child.getAttribute("id") != "tremendous-iframe" && child.getAttribute("id") != "tremendous-overlay") {
+                child.className += ' tremendous-hidden-mb';
+              }
+            }
+          }
+        }
+
+        function allowMobileScroll(isMobile) {
+          if (isMobile) {
+            var children = document.body.children;
+            for (var i=0; i < children.length; i++) {
+              var child = children[i];
+              child.className = child.className.replace(' tremendous-hidden-mb', '')
+            }
+          }
+        }
+
+        function Tremendous(publicKey, options) {
+          var opts = options || {};
+          if (this instanceof Tremendous) {
+            this.reward = Reward(publicKey, opts);
+          } else {
+            return new Tremendous(publicKey, opts);
+          }
+        }
+
+        Tremendous.domains = {
+          SANDBOX: "http://localhost:3001",
+          PRODUCTION: "https://reward.tremendous.com"
+        };
+
+        function Reward(publicKey, options) {
+          var opts = options || {};
+
+          if (this instanceof Reward) {
+            this.publicKey = publicKey;
+            this.options = opts
+            this.domain = opts.domain || Tremendous.domains.SANDBOX;
+            this.oldHtmlOverflow = document.body.style.overflow;
+            this.iframe = null;
+          } else {
+            return new Reward(publicKey, opts);
+          }
+        }
+
+        Reward.prototype.create = function(order, options) {
+          if (order == null) throw "reward required";
+
+          var opts = options || {};
+
+          this.style = opts.style || {};
+          this.order = order;
+          this.onLoad = opts.onLoad || function() {};
+          this.onRedeem = opts.onRedeem || function() {};
+          this.onError = opts.onError || function() {};
+          this.onExit = opts.onExit || function() {};
+
+          this.load(this.domain + "/embed/?public_key=" + this.publicKey);
+        };
+
+        Reward.prototype.open = function(externalId, options) {
+          if (externalId == null) throw "externalId required";
+
+          var opts = options || {}
+          this.onLoad = opts.onLoad || function() {};
+          this.onRedeem = opts.onRedeem || function() {};
+          this.onError = opts.onError || function() {};
+          this.onExit = opts.onExit || function() {};
+
+          this.load(this.domain + "/embed/?id=" + externalId + "&public_key=" + this.publicKey);
+        };
+
+        Reward.prototype.load = function(url) {
+          this.url = url;
+
+          document.body.style.overflow = 'hidden';
+          this.addStyleSheet();
+
+          var overlay = this.overlay = document.createElement('div');
+          this.overlay.id = "tremendous-overlay";
+
+          var loader = this.loader = document.createElement('div');
+          this.loader.className = "tremendous--loader";
+          this.loader.setAttribute("style", "position: relative; top: 50%; width:40px;height:40px;margin:0 auto;background-color:#fff;border-radius:100%;-webkit-animation:sk-scaleout 1.0s infinite ease-in-out;animation:sk-scaleout 1.0s infinite ease-in-out")
+          overlay.appendChild(this.loader);
+
+          document.body.appendChild(this.overlay);
+          setTimeout(function() {
+            overlay.className += ' tremendous-overlay--open'
+          }, 0);
+
+          if (this.iframe != null) {
+            this.iframe.setAttribute("style", "opacity: 0;");
+            document.body.appendChild(this.iframe);
+          } else {
+            var iframe = this.createFrame();
+            document.body.appendChild(iframe);
+
+            iframe.setAttribute("id", "tremendous-iframe");
+            this.iframe.setAttribute("style", "border: 0;");
+            this.iframe.setAttribute("height", "100%");
+            this.iframe.setAttribute("width", "100%");
+          }
+        };
+
+        Reward.prototype.close = function() {
+          document.body.style.overflow = this.oldHtmlOverflow;
+          allowMobileScroll(detectmob());
+          this.removeStyleSheet();
+
+          this.overlay.parentNode.removeChild(this.overlay);
+          this.iframe.parentNode.removeChild(this.iframe);
+        };
+
+        Reward.prototype.createFrame = function() {
+          var iframe = document.createElement('iframe');
+          iframe.src = this.url;
+          this.iframe = iframe;
+
+          if (window.addEventListener) {
+            window.addEventListener("message", this.onIframeMessage.bind(this), false);
+          } else {
+            window.attachEvent("onmessage", this.onIframeMessage.bind(this));
+          }
+
+          return this.iframe;
+        };
+
+        Reward.prototype.addStyleSheet = function() {
+          var animation = "@-webkit-keyframes sk-scaleout{0%{-webkit-transform:scale(0)}100%{-webkit-transform:scale(1);opacity:0}}@keyframes sk-scaleout{0%{-webkit-transform:scale(0);transform:scale(0)}100%{-webkit-transform:scale(1);transform:scale(1);opacity:0}}";
+          var css = '.tremendous-hidden-mb { display: none;} #tremendous-overlay.tremendous-overlay--open { opacity: 1; transition: opacity 300ms;-moz-transition: opacity 300ms;-webkit-transition: opacity 300ms;-o-transition: opacity 300ms; } #tremendous-overlay { opacity: 0; height: 100%; left: 0; position: fixed; top: 0; width: 100%; background: rgba(0, 0, 0, 0.5); -ms-overflow-style: -ms-autohiding-scrollbar;overflow-x: hidden;overflow-y: visible; transition: opacity 350ms;-moz-transition: opacity 350ms;-webkit-transition: opacity 350ms;-o-transition: opacity 350ms;}' + animation;
+          var stylesheet = this.stylesheet = document.createElement('style');
+
+          stylesheet.type = 'text/css';
+          stylesheet.id = "tremendous-style";
+
+          if (stylesheet.styleSheet){
+            stylesheet.styleSheet.cssText = css;
+          } else {
+            stylesheet.appendChild(document.createTextNode(css));
+          }
+
+          (document.head || document.getElementsByTagName('head')[0]).appendChild(stylesheet);
+        };
+
+        Reward.prototype.removeStyleSheet = function() {
+          (document.head || document.getElementsByTagName('head')[0]).removeChild(this.stylesheet);
+        }
+
+        Reward.prototype.onIframeMessage = function(message) {
+          try {
+            var message = JSON.parse(message.data);
+
+            switch(message.event) {
+              case "MOUNTED":
+                this.iframe.contentWindow.postMessage(
+                  JSON.stringify({
+                    event: "CONFIG",
+                    order: this.order,
+                    version: "2.0.0"
+                  }),
+                  "*"
+                );
+              case "LOADED":
+                this.iframe.setAttribute("style", "opacity: 1;vertical-align: middle; position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 99999999; border: 0; display: block; overflow-x: hidden; overflow-y: auto;");
+                // This is a awful.
+                setTimeout(function() {
+                  preventMobileScroll(detectmob())
+                }, 1000);
+
+                this.onLoad();
+                return;
+              case "EXIT":
+                this.close();
+                this.onExit();
+                return;
+              case "REDEEM":
+                delete message.event;
+                this.onRedeem(message.reward);
+                return;
+              case "ERROR":
+                delete message.event;
+                this.onError(message);
+                return;
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        };
+
+        window.Tremendous = Tremendous;
+
+      })(window);
+
+
+    :javascript
+      document.addEventListener("DOMContentLoaded", function() {
         var client = Tremendous("#{tremendous_client_id}", {
           domain: Tremendous.domains.SANDBOX
         });
@@ -55,14 +268,17 @@
                 console.log(encodedReward);
                 // Send this JWT encoded token to backend
                 // decode it and approve the reward via the APPROVE REST endpoint.
-                $.post('/approve-reward', {jwt: encodedReward}, function() {
-                  alert( "Reward approved on server.");
-                });
+                fetch(url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ jwt: encodedReward })
+                }).then(() => alert( "Reward approved on server.")).catch(err => alert("An error occurred."));
               }
             }
           );
 
         }
-
-        $("a#launchpad").on("click", redeem);
+        document.querySelector("a#launchpad").addEventListener("click", redeem);
       });
