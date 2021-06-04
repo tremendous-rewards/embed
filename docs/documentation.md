@@ -19,10 +19,7 @@ Please contact clients@tremendous.com before starting to integrate. The Tremendo
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN. You'll also need to add jQuery.
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.3.0/client.js" />
-
-<!-- Not required if you already have jQuery available. -->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" />
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.5.1/client.js"/>
 ```
 
 
@@ -36,7 +33,7 @@ This integration is useful when you have already created a link reward, and want
 <div id="launchpad">Click me to redeem</div>
 
 <script type="text/javascript">
-  $(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     var client = Tremendous("TREMENDOUS_CLIENT_ID", {
       domain: Tremendous.domains.SANDBOX
     });
@@ -65,7 +62,7 @@ This integration is useful when you have already created a link reward, and want
 
     }
 
-    $("#launchpad").on("click", redeem);
+    document.querySelector("a#launchpad").addEventListener("click", redeem);
   });
 
 </script>
@@ -84,7 +81,7 @@ This approach requires more configuration, as rewards will have to be approved b
 <div id="launchpad">Click me to redeem</div>
 
 <script type="text/javascript">
-  $(function() {
+  document.addEventListener("DOMContentLoaded", function() {
     var client = Tremendous("TREMENDOUS_CLIENT_ID", {
       domain: Tremendous.domains.SANDBOX
     });
@@ -134,7 +131,7 @@ This approach requires more configuration, as rewards will have to be approved b
 
     }
 
-    $("#launchpad").on("click", redeem);
+    document.querySelector("a#launchpad").addEventListener("click", redeem);
   });
 
 </script>
