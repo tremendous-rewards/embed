@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.5.1/client.js"}
     %title Reward created in real-time example | Tremendous Embed
 
   %body
@@ -54,7 +54,7 @@
                 console.log(encodedReward);
                 // Send this JWT encoded token to backend
                 // decode it and approve the reward via the APPROVE REST endpoint.
-                fetch(url, {
+                fetch('/approve-reward', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
