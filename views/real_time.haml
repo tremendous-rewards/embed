@@ -1,7 +1,6 @@
 !!!
 %html
   %head
-    %script{type: "text/javascript", src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"}
     %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.3.0/client.js"}
     %title Reward created in real-time example | Tremendous Embed
 
@@ -13,9 +12,9 @@
       Click me to redeem
 
     :javascript
-      $(function() {
+      document.addEventListener("DOMContentLoaded", function() {
         var client = Tremendous("#{tremendous_client_id}", {
-          domain: Tremendous.domains.SANDBOX
+          domain: Tremendous.domains.SANDBOX,
         });
 
         function redeem() {
@@ -55,14 +54,17 @@
                 console.log(encodedReward);
                 // Send this JWT encoded token to backend
                 // decode it and approve the reward via the APPROVE REST endpoint.
-                $.post('/approve-reward', {jwt: encodedReward}, function() {
-                  alert( "Reward approved on server.");
-                });
+                fetch(url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ jwt: encodedReward })
+                }).then(() => alert( "Reward approved on server.")).catch(err => alert("An error occurred."));
               }
             }
           );
 
         }
-
-        $("a#launchpad").on("click", redeem);
+        document.querySelector("a#launchpad").addEventListener("click", redeem);
       });
