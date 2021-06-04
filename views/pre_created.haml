@@ -18,7 +18,7 @@
       Click me to redeem
 
     :javascript
-      $(function() {
+      document.addEventListener("DOMContentLoaded", function() {
         var client = Tremendous("#{tremendous_client_id}", {
           domain: Tremendous.domains.SANDBOX
         });
