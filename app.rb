@@ -102,6 +102,9 @@ post '/approve-reward' do
   decoded_object = JWT.decode(jwt, ENV['TREMENDOUS_API_KEY'], 'HS256')
   reward = decoded_object.first
 
+  # This is a good place to ensure that the reward was actually meant to be created.
+  # Checking against the user's email address is a good practice.
+
   # Approve the reward.
   # a 200 response here means that the approval was successful.
   response = TremendousAPI.post("/rewards/#{reward['id']}/approve")

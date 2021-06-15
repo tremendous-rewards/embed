@@ -61,7 +61,7 @@
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({ jwt: encodedReward })
-                }).then(() => alert( "Reward approved on server.")).catch(err => alert("An error occurred."));
+                }).then(() => console.log( "Reward approved on server.")).catch(err => alert("An error occurred."));
               }
             }
           );
