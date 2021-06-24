@@ -11,10 +11,6 @@ To generate your API key, you'll navigate to Team Settings > Developers. You wil
 
 Production keys are in the same place in the production environment.
 
-### Request whitelabel access
-
-Please contact clients@tremendous.com before starting to integrate. The Tremendous team needs to turn on a configuration for your account enabling whitelabel functionality in order for everything to work correctly.
-
 ## Required scripts
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN.
 
