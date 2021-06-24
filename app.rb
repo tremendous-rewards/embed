@@ -23,10 +23,12 @@ end
 get '/real-time' do
   funding_source_id = TremendousAPI.get("/funding_sources").parsed_response['funding_sources'].first['id']
   product_ids = TremendousAPI.get("/products").parsed_response['products'].map{|p| p['id']}
+  campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
   haml :real_time, locals: {
     tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
     funding_source_id: funding_source_id,
-    product_ids: product_ids
+    product_ids: product_ids,
+    campaign_id: campaign_id
   }
 end
 
@@ -79,7 +81,7 @@ post '/approve-reward' do
   # {
   #   jwt: "....a-very-long-string"
   # }
-  jwt = params['jwt']
+  jwt = JSON.parse(request.body.read)['jwt']
 
   # Decoded object is an array
   # first element is payload, second is header
