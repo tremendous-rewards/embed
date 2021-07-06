@@ -8,6 +8,7 @@
     %a{href: "/"} Home
     %h1 Embed for an uncreated reward
     %p This demonstrates the flow for a reward that hasn't been created yet. The reward is created in real-time via the embed after the recipient redeems. It requires approval by your application.
+
     %a#launchpad{href: '#'}
       Click me to redeem
 
@@ -22,6 +23,9 @@
           // should mirror that used in the [REST API](https://www.tremendous.com/docs).
           var order = {
             countries: ["US"],
+            // Note: the external_id below serves as an idempotency token.
+            // Two orders cannot be created with the same external_id
+            external_id: "#{my_internal_id}",
             payment: {
               funding_source_id: "#{funding_source_id}",
             },
