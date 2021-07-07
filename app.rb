@@ -26,14 +26,14 @@ get '/real-time' do
   product_ids = TremendousAPI.get("/products").parsed_response['products'].map{|p| p['id']}
   campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
 
-  my_internal_id = SecureRandom.hex
+  my_external_id = SecureRandom.hex
 
   haml :real_time, locals: {
     tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
     funding_source_id: funding_source_id,
     product_ids: product_ids,
     campaign_id: campaign_id,
-    my_internal_id: my_internal_id
+    my_external_id: my_external_id
   }
 end
 
