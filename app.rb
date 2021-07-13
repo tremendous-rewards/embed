@@ -9,7 +9,9 @@ require 'securerandom'
 # Tiny wrapper around the Tremendous API.
 class TremendousAPI
   include HTTParty
-  base_uri 'https://testflight.tremendous.com/api/v2'
+
+  # Default to Tremendous staging.
+  base_uri ENV['TREMENDOUS_API_BASE_URI'] || 'https://testflight.tremendous.com/api/v2'
   headers "Authorization" => "Bearer #{ENV['TREMENDOUS_API_KEY']}"
 end
 
