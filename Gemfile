@@ -17,6 +17,3 @@ gem 'byebug'
 
 # Load environment variables
 gem 'dotenv'
-
-# Debugging
-gem 'byebug'
