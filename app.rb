@@ -86,9 +86,12 @@ end
 post '/approve-reward' do
   # params will look like this:
   # {
-  #   jwt: "....a-very-long-string"
+  #   rewardEncodedWithApiKey: "....a-very-long-string",
+  #   rewardEncodedWithOauthAppSecret: "....a-very-long-string"
   # }
-  jwt = JSON.parse(request.body.read)['jwt']
+  body = JSON.parse(request.body.read)
+  reward_encoded_with_api_key = body['rewardEncodedWithApiKey']
+  reward_encoded_with_oauth_app_secret = body['rewardEncodedWithOauthAppSecret']
 
   # Decoded object is an array
   # first element is payload, second is header
@@ -108,8 +111,20 @@ post '/approve-reward' do
   #    # header
   #    {"typ"=>"JWT", "alg"=>"HS256"}
   #  ]
-  decoded_object = JWT.decode(jwt, ENV['TREMENDOUS_API_KEY'], 'HS256')
+
+  # Decode the object using your API Key
+  decoded_object = JWT.decode(reward_encoded_with_api_key,
+                              ENV['TREMENDOUS_API_KEY'],
+                              'HS256')
   reward = decoded_object.first
+  puts "Reward decoded with api key: #{reward['id']}"
+
+  # Or decode it using your oauth app secret
+  decoded_object = JWT.decode(reward_encoded_with_oauth_app_secret,
+                              ENV['TREMENDOUS_CLIENT_SECRET'],
+                              'HS256')
+  reward = decoded_object.first
+  puts "Reward decoded with oauth app secret: #{reward['id']}"
 
   # This is a good place to ensure that the reward was actually meant to be created.
   # Checking against the user's email address is a good practice.
