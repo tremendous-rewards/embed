@@ -15,7 +15,7 @@ Production keys are in the same place in the production environment.
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN.
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.5.3/client.js"/>
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v3.0.0/client.js"/>
 ```
 
 
