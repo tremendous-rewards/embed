@@ -15,7 +15,7 @@ Production keys are in the same place in the production environment.
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN.
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.5.1/client.js"/>
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v2.5.3/client.js"/>
 ```
 
 
@@ -182,4 +182,3 @@ Triggered on any error within the client.  An error object is passed to the hand
 #### `onExit`
 
 Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
-
