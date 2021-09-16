@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v2.5.3/client.js"}
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v3.0.0/client.js"}
     %title Reward created in real-time example | Tremendous Embed
 
   %body
@@ -55,7 +55,7 @@
               onError: function(err) {
                 console.log(err);
               },
-              onRedeem: function(rewardEncodedWithApiKey, rewardEncodedWithOauthAppSecret) {
+              onRedeem: function(rewardEncodedWithOauthAppSecret) {
                 console.log("User redeemed");
                 // Send this JWT encoded token to backend
                 // decode it and approve the reward via the APPROVE REST endpoint.
@@ -65,7 +65,6 @@
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({
-                    rewardEncodedWithApiKey: rewardEncodedWithApiKey,
                     rewardEncodedWithOauthAppSecret: rewardEncodedWithOauthAppSecret
                   })
                 }).then(() => console.log("Reward approved on server."))
