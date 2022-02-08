@@ -156,7 +156,7 @@ To fulfill the reward, you will need to complete the following steps:
 1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
 2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
 3. Use the Order ID in `payload.resource.id` to issue a `GET` request to the [Retrieve Order endpoint]([Retrieve order](https://developers.tremendous.com/reference/core-orders-show)
-4. Validate that the user is entitled to the reward with the given the order `rewards` attributes (i.e. the denomination, currency code and recipient email)
+4. Validate that the user is entitled to the reward with the given order `rewards` attributes (i.e. the denomination, currency code and recipient email)
 5. Issue a `POST` request to the [Reward Approve endpoint](https://www.tremendous.com/docs) using the Order ID
 
 
