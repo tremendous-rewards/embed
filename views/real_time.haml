@@ -57,18 +57,6 @@
               },
               onRedeem: function(rewardEncodedWithOauthAppSecret) {
                 console.log("User redeemed");
-                // Send this JWT encoded token to backend
-                // decode it and approve the reward via the APPROVE REST endpoint.
-                fetch('/approve-reward', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    rewardEncodedWithOauthAppSecret: rewardEncodedWithOauthAppSecret
-                  })
-                }).then(() => console.log("Reward approved on server."))
-                  .catch(err => alert("An error occurred."));
               }
             }
           );
