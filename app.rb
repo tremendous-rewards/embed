@@ -80,50 +80,39 @@ get '/pre-created' do
   }
 end
 
-# The real-time implementation of the embed
-# makes a POST request to this endpoint after a reward is created.
-# This lets you approve the reward.
-post '/approve-reward' do
-  # params will look like this:
-  # {
-  #   rewardEncodedWithApiKey: "....a-very-long-string",
-  #   rewardEncodedWithOauthAppSecret: "....a-very-long-string"
-  # }
-  body = JSON.parse(request.body.read)
-  reward_encoded_with_oauth_app_secret = body['rewardEncodedWithOauthAppSecret']
-
-  # Decoded object is an array
-  # first element is payload, second is header
-  # [
-  #   # payload
-  #   {"id"=>"F2U0AIFFO6S1",
-  #     "order_id"=>"L9D3T7XFE1TY",
-  #     "value"=>{"denomination"=>25.0, "currency_code"=>"USD"},
-  #     "delivery"=>
-  #       {"method"=>"LINK",
-  #        "link"=>"https://testflight.tremendous.com/rewards/payout/ldoj1dh3a",
-  #        "status"=>"PENDING"},
-  #     "recipient"=>
-  #       {"email"=>"recipientgoeshere@gmail.com", "name"=>"Recipient Name"},
-  #     "products"=>["DPIPLH0SRBO6"]},
+post '/webhooks' do
+  # The real-time implementation of the embed requires
+  # an Order to be approved
   #
-  #    # header
-  #    {"typ"=>"JWT", "alg"=>"HS256"}
-  #  ]
-  decoded_object = JWT.decode(reward_encoded_with_oauth_app_secret,
-                              ENV['TREMENDOUS_CLIENT_SECRET'],
-                              'HS256')
-  reward = decoded_object.first
+  # As an Order is created, a webhook event is POSTed:
+  #
+  # {"event"=>"ORDERS.CREATED",
+  #  "uuid"=>"1234asdf-5678-lkjh-1209-qwertypoiu09",
+  #  "created_utc"=>"2022-01-01T00:00:00.000-00:00",
+  #  "payload"=>{
+  #              "resource"=>{
+  #                           "id"=>"ABCD1234EFGH",
+  #                           "type"=>"orders"},
+  #              "meta"=>{}}}
+  body = JSON.parse(request.body.read)
+  order_id = body["payload"]["resource"]["id"]
 
-  # This is a good place to ensure that the reward was actually meant to be created.
-  # Checking against the user's email address is a good practice.
+  # The resource.id from the webhook payload can be
+  # used to fetch the Order and its rewards and then
+  # to approve that same Order
+  #
+  # This is a good place to ensure that the reward
+  # was actually meant to be created.
+  # Checking against the user's email address is a
+  # good practice.
 
-  # Approve the reward.
-  # a 200 response here means that the approval was successful.
-  response = TremendousAPI.post("/rewards/#{reward['id']}/approve")
-  if response.ok?
-    halt 200
-  else
-    raise "Unable to approve reward"
+  if body["event"] == "ORDERS.CREATED"
+    response = TremendousAPI.post("/orders/#{order_id}/approve")
+    if response.ok?
+      puts response
+      halt 200
+    else
+      raise "Unable to approve reward"
+    end
   end
 end
