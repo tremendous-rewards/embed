@@ -84,7 +84,8 @@ post '/webhooks' do
   # The real-time implementation of the embed requires
   # an Order to be approved
   #
-  # As an Order is created, a webhook event is POSTed:
+  # As an Order is created, a webhook event is POSTed,
+  # so we  need to check for this event and handle it.
   #
   # {"event"=>"ORDERS.CREATED",
   #  "uuid"=>"1234asdf-5678-lkjh-1209-qwertypoiu09",
@@ -95,21 +96,22 @@ post '/webhooks' do
   #                           "type"=>"orders"},
   #              "meta"=>{}}}
   body = JSON.parse(request.body.read)
-  order_id = body["payload"]["resource"]["id"]
-
-  # The resource.id from the webhook payload can be
-  # used to fetch the Order and its rewards and then
-  # to approve that same Order
-  #
-  # This is a good place to ensure that the reward
-  # was actually meant to be created.
-  # Checking against the user's email address is a
-  # good practice.
 
   if body["event"] == "ORDERS.CREATED"
+    # The resource.id from the webhook payload can be
+    # used to fetch the Order and its rewards and then
+    # to approve that same Order
+    order_id = body["payload"]["resource"]["id"]
+
+    # This is a good place to ensure that the reward
+    # was actually meant to be created.
+    # Checking against the user's email address is a
+    # good practice.
+    response = TremendousAPI.get("/orders/#{order_id}")
+    puts response["order"]["rewards"].first["recipient"]["email"]
+
     response = TremendousAPI.post("/orders/#{order_id}/approve")
     if response.ok?
-      puts response
       halt 200
     else
       raise "Unable to approve reward"
