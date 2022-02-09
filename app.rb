@@ -99,16 +99,17 @@ post '/webhooks' do
 
   if body["event"] == "ORDERS.CREATED"
     # The resource.id from the webhook payload can be
-    # used to fetch the Order and its rewards and then
-    # to approve that same Order
+    # used to approve the order
     order_id = body["payload"]["resource"]["id"]
 
     # This is a good place to ensure that the reward
-    # was actually meant to be created.
-    # Checking against the user's email address is a
-    # good practice.
-    response = TremendousAPI.get("/orders/#{order_id}")
-    puts response["order"]["rewards"].first["recipient"]["email"]
+    # was actually meant to be created. The order
+    # data comes within the webhook payload, including
+    # its rewards, amounts and recipients
+    order = body["payload"]["meta"]
+    reward = order["rewards"].first
+    recipient_email = reward["recipient"]["email"]
+    puts recipient_email
 
     response = TremendousAPI.post("/orders/#{order_id}/approve")
     if response.ok?
