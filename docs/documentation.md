@@ -138,13 +138,6 @@ This approach requires more configuration, as rewards will have to be approved b
 
 When a reward is generated using this approach, execution is paused until it is approved via the `Approve` REST endpoint. For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
 
-To fulfill the reward, you will need to complete the following steps:
-
-1. Pass this token to your backend
-2. Decode the token using your private REST access token and the SHA-256 hash algorithm (see example below)
-3. Validate that the user is entitled to the reward with the given attributes (i.e. the denomination and currency code)
-4. Issue a `POST` request to the [Reward Approve endpoint](https://www.tremendous.com/docs) using the Reward ID
-
 Below is a Ruby implementation of JWT. Libraries are available in many other languages [see here](https://jwt.io/).
 
 ```ruby
@@ -157,6 +150,14 @@ Below is a Ruby implementation of JWT. Libraries are available in many other lan
     'HS256'  # Cryptographically sign with HS256 - HMAC using SHA-256 hash algorithm
   )
 ```
+
+To fulfill the reward, you will need to complete the following steps:
+
+1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
+2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
+3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`
+4. Issue a `POST` request to the [Order Approve endpoint](https://www.tremendous.com/docs) using the Order ID in `payload.resource.id`
+
 
 #### Preventing Duplication
 
