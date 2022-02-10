@@ -91,32 +91,24 @@ post '/webhooks' do
   # {"event"=>"ORDERS.CREATED",
   #  "uuid"=>"1234asdf-5678-lkjh-1209-qwertypoiu09",
   #  "created_utc"=>"2022-01-01T00:00:00.000-00:00",
-  #  "payload"=>{
-  #              "resource"=>{
-  #                           "id"=>"ABCD1234EFGH",
+  #  "payload"=>{"resource"=>{"id"=>"ABCD1234EFGH",
   #                           "type"=>"orders"},
-  #              "meta"=>{
-  #                       "id"=>"ABCD1234EFGH",
+  #              "meta"=>{"id"=>"ABCD1234EFGH",
   #                       "external_id"=>"12345678asdfghjk12345678asdfghjk",
   #                       "created_at"=>"2022-01-10T00:00:00.000Z",
   #                       "status"=>"PENDING APPROVAL",
-  #                       "payment"=>{
-  #                                   "subtotal"=>25.0,
+  #                       "payment"=>{"subtotal"=>25.0,
   #                                   "total"=>25.0,
   #                                   "fees"=>0.0},
-  #                       "rewards"=>[{
-  #                                    "id"=>"1234ABCD5678",
+  #                       "rewards"=>[{"id"=>"1234ABCD5678",
   #                                    "order_id"=>"ABCD1234EFGH",
   #                                    "created_at"=>"2022-01-01T00:00:00.000Z",
-  #                                    "value"=>{
-  #                                              "denomination"=>25.0,
+  #                                    "value"=>{"denomination"=>25.0,
   #                                              "currency_code"=>"USD"},
-  #                                    "delivery"=>{
-  #                                                 "method"=>"LINK",
+  #                                    "delivery"=>{"method"=>"LINK",
   #                                                 "link"=>"https://rewards.tremendous.com/rewards/payout/abcd12345",
   #                                                 "status"=>"PENDING"},
-  #                                                 "recipient"=>{
-  #                                                               "email"=>"foo-bar@example.com",
+  #                                                 "recipient"=>{"email"=>"foo-bar@example.com",
   #                                                               "name"=>"Foo Bar"}}]}}}
 
   body = JSON.parse(request.body.read)
