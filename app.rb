@@ -84,8 +84,9 @@ post '/webhooks' do
   # The real-time implementation of the embed requires
   # an Order to be approved
   #
-  # As an Order is created, a webhook event is POSTed,
-  # so we  need to check for this event and handle it.
+  # Youl'll need to have a webhook configured as
+  # when an Order is created, a webhook event is POSTed
+  # and we will handle this event. For instance:
   #
   # {"event"=>"ORDERS.CREATED",
   #  "uuid"=>"1234asdf-5678-lkjh-1209-qwertypoiu09",
@@ -94,7 +95,30 @@ post '/webhooks' do
   #              "resource"=>{
   #                           "id"=>"ABCD1234EFGH",
   #                           "type"=>"orders"},
-  #              "meta"=>{}}}
+  #              "meta"=>{
+  #                       "id"=>"ABCD1234EFGH",
+  #                       "external_id"=>"12345678asdfghjk12345678asdfghjk",
+  #                       "created_at"=>"2022-01-10T00:00:00.000Z",
+  #                       "status"=>"PENDING APPROVAL",
+  #                       "payment"=>{
+  #                                   "subtotal"=>25.0,
+  #                                   "total"=>25.0,
+  #                                   "fees"=>0.0},
+  #                       "rewards"=>[{
+  #                                    "id"=>"1234ABCD5678",
+  #                                    "order_id"=>"ABCD1234EFGH",
+  #                                    "created_at"=>"2022-01-01T00:00:00.000Z",
+  #                                    "value"=>{
+  #                                              "denomination"=>25.0,
+  #                                              "currency_code"=>"USD"},
+  #                                    "delivery"=>{
+  #                                                 "method"=>"LINK",
+  #                                                 "link"=>"https://rewards.tremendous.com/rewards/payout/abcd12345",
+  #                                                 "status"=>"PENDING"},
+  #                                                 "recipient"=>{
+  #                                                               "email"=>"foo-bar@example.com",
+  #                                                               "name"=>"Foo Bar"}}]}}}
+
   body = JSON.parse(request.body.read)
 
   if body["event"] == "ORDERS.CREATED"
