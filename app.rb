@@ -1,7 +1,6 @@
 require 'sinatra'
 require "sinatra/reloader"
 require 'httparty'
-require 'jwt'
 require 'byebug'
 require 'dotenv/load'
 require 'securerandom'
@@ -121,7 +120,9 @@ post '/webhooks' do
     # This is a good place to ensure that the reward
     # was actually meant to be created. The order
     # data comes within the webhook payload, including
-    # its rewards, amounts and recipients
+    # its rewards, amounts and recipients.
+    # We'd recommend checking the email, amounts, and external_id against your database
+    # to make sure this was properly authorized.
     order = body["payload"]["meta"]
     reward = order["rewards"].first
     recipient_email = reward["recipient"]["email"]

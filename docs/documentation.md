@@ -109,18 +109,16 @@ This approach requires more configuration, as rewards will have to be approved b
         order,
         {
           onLoad: function() {
-            console.log("It Loaded");
+            console.log("It loaded");
           },
           onExit: function() {
-            console.log("It Closed");
+            console.log("It closed");
           },
           onError: function(err) {
             console.log(err);
           },
-          onRedeem: function(encodedReward) {
-            // Send this JWT encoded token to backend
-            // decode it and approve the reward via the APPROVE REST endpoint.
-            console.log(encodedReward);
+          onRedeem: function() {
+            console.log("Reward redeemed")
           }
         }
       );
@@ -136,32 +134,19 @@ This approach requires more configuration, as rewards will have to be approved b
 
 #### Approving rewards
 
-When a reward is generated using this approach, execution is paused until it is approved via the `Approve` REST endpoint. For security purposes, the ID and data for the reward is passed as an encoded JWT to prevent client side manipulation.
-
-Below is a Ruby implementation of JWT. Libraries are available in many other languages [see here](https://jwt.io/).
-
-```ruby
-  require 'jwt'
-
-  # We encrypt the token using our private REST access token (retrievable in the dashboard)
-  token = JWT.decode(
-    encoded_token,
-    "API_KEY",
-    'HS256'  # Cryptographically sign with HS256 - HMAC using SHA-256 hash algorithm
-  )
-```
+When a reward is generated using the "uncreated rewards" approach, execution is paused until the order is approved via the `Approve` REST endpoint. This is because the order is created by the client, and thus has the ability to be spoofed or modified before being sent to the Tremendous servers.
 
 To fulfill the reward, you will need to complete the following steps:
 
 1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
 2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
-3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`
-4. Issue a `POST` request to the [Order Approve endpoint](https://www.tremendous.com/docs) using the Order ID in `payload.resource.id`
+3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`. Ensure that the email, reward amounts, and external_id are correct.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the Order ID in `payload.resource.id`
 
 
 #### Preventing Duplication
 
-Each reward should be uniquely associated with a single reward in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order. This is usually tied to some unique identifier for each reward in your codebase. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
+Each order and reward should be associated with some unique identifier in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
 
 
 ## Events
@@ -169,12 +154,6 @@ Each reward should be uniquely associated with a single reward in your backend d
 #### `onLoad`
 
 Triggered when the client is successfully mounted.  Passed a single config object to the handler as a parameter.
-
-#### `onRedeem`
-
-Triggered when the user completes their redemption selection. The argument passed to the onRedeem handler is a JWT representing the generated reward.
-
-When a reward is created through this client, a final approval step must be taken on the backend via the REST API.
 
 #### `onError`
 

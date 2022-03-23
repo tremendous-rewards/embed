@@ -9,9 +9,6 @@ gem 'haml'
 # Make HTTP requests.
 gem 'httparty'
 
-# Decode JSON web tokens.
-gem 'jwt'
-
 # Debugging.
 gem 'byebug'
 
