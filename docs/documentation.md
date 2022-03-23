@@ -134,7 +134,7 @@ This approach requires more configuration, as rewards will have to be approved b
 
 #### Approving rewards
 
-When a reward is generated using the "uncreated rewards" approach, execution is paused until it is approved via the `Approve` REST endpoint. This is because the order is created by the client, and thus has the ability to be spoofed or modified before being sent to the Tremendous servers.
+When a reward is generated using the "uncreated rewards" approach, execution is paused until the order is approved via the `Approve` REST endpoint. This is because the order is created by the client, and thus has the ability to be spoofed or modified before being sent to the Tremendous servers.
 
 To fulfill the reward, you will need to complete the following steps:
 
@@ -146,7 +146,7 @@ To fulfill the reward, you will need to complete the following steps:
 
 #### Preventing Duplication
 
-Each reward should be uniquely associated with a single reward in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order. This is usually tied to some unique identifier for each reward in your codebase. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
+Each order and reward should be associated with some unique identifier in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
 
 
 ## Events
