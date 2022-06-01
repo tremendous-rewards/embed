@@ -67,7 +67,11 @@ This integration is useful when you have already created a link reward, and want
 
 ### Uncreated rewards
 
-If you have rewards that haven't been created yet, you can create them just-in-time using the SDK. Tremendous creates the order at the moment when your recipient makes their reward selection.
+If you have rewards that haven't been created yet, you can create them just-in-time using the SDK.
+Tremendous creates the order at the moment when your recipient makes their reward selection.
+
+If you ever need to add custom data to a reward, please check the [API documentation](https://developers.tremendous.com/reference/using-custom-fields-to-add-custom-data-to-rewards) and add `custom_fields` to the
+`reward` object as described in there.
 
 This approach requires more configuration, as rewards will have to be approved by your server.
 
