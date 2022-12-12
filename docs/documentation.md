@@ -49,8 +49,7 @@ This integration is useful when you have already created a link reward, and want
           onError: function(err) {
             console.log(err);
           },
-          onRedeem: function(encodedReward) {
-            console.log(encodedReward);
+          onRedeem: function() {
             // Approval not required.
           }
         }
