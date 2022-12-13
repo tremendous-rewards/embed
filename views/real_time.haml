@@ -55,8 +55,8 @@
               onError: function(err) {
                 console.log(err);
               },
-              onRedeem: function() {
-                console.log("User redeemed");
+              onRedeem: function(rewardId, orderId) {
+                console.log("User redeemed:", rewardId, orderId);
               }
             }
           );

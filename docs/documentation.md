@@ -120,8 +120,8 @@ This approach requires more configuration, as rewards will have to be approved b
           onError: function(err) {
             console.log(err);
           },
-          onRedeem: function() {
-            console.log("Reward redeemed")
+          onRedeem: function(rewardId, orderId) {
+            console.log(`Reward redeemed: ${rewardId}. Order ID: ${orderId}`)
           }
         }
       );
@@ -139,13 +139,21 @@ This approach requires more configuration, as rewards will have to be approved b
 
 When a reward is generated using the "uncreated rewards" approach, execution is paused until the order is approved via the `Approve` REST endpoint. This is because the order is created by the client, and thus has the ability to be spoofed or modified before being sent to the Tremendous servers.
 
-To fulfill the reward, you will need to complete the following steps:
+To fulfill the reward, there are two possible approaches:
+
+##### Using Webhooks
 
 1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
 2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
 3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`. Ensure that the email, reward amounts, and external_id are correct.
 4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the Order ID in `payload.resource.id`
 
+##### Using the `onRedeem` callback
+
+1. Capture the `rewardId` received on the `onRedeem` callback that you provided to `client.reward.create`, which is triggered after the user redeems the reward, and send it to your server.
+2. On the server, make a `GET` request to the [rewards endpoint](https://developers.tremendous.com/reference/core-rewards-show) using the `rewardId`.
+3. Validate that the user is entitled to the reward checking the response payload.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the `order_id` from the response payload.
 
 #### Preventing Duplication
 
