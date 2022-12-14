@@ -141,19 +141,19 @@ When a reward is generated using the "uncreated rewards" approach, execution is 
 
 To fulfill the reward, there are two possible approaches:
 
+##### Using the `onRedeem` callback (recommended)
+
+1. Capture the `rewardId` received on the `onRedeem` callback that you provided to `client.reward.create`, which is triggered after the user redeems the reward, and send it to your server.
+2. On the server, make a `GET` request to the [rewards endpoint](https://developers.tremendous.com/reference/core-rewards-show) using the `rewardId`.
+3. Validate that the user is entitled to the reward checking the response payload.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the `order_id` from the response payload.
+
 ##### Using Webhooks
 
 1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
 2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
 3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`. Ensure that the email, reward amounts, and external_id are correct.
 4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the Order ID in `payload.resource.id`
-
-##### Using the `onRedeem` callback
-
-1. Capture the `rewardId` received on the `onRedeem` callback that you provided to `client.reward.create`, which is triggered after the user redeems the reward, and send it to your server.
-2. On the server, make a `GET` request to the [rewards endpoint](https://developers.tremendous.com/reference/core-rewards-show) using the `rewardId`.
-3. Validate that the user is entitled to the reward checking the response payload.
-4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the `order_id` from the response payload.
 
 #### Preventing Duplication
 
@@ -162,14 +162,18 @@ Each order and reward should be associated with some unique identifier in your b
 
 ## Events
 
-#### `onLoad`
+### `onLoad`
 
-Triggered when the client is successfully mounted.  Passed a single config object to the handler as a parameter.
+Triggered when the client is successfully mounted. Passed a single config object to the handler as a parameter.
 
-#### `onError`
+### `onError`
 
-Triggered on any error within the client.  An error object is passed to the handler as a parameter.
+Triggered on any error within the client. An error object is passed to the handler as a parameter.
 
-#### `onExit`
+### `onExit`
 
 Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
+
+### `onRedeem`
+
+Triggered when the user confirms the redemption of the reward.

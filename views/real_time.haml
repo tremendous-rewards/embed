@@ -57,6 +57,13 @@
               },
               onRedeem: function(rewardId, orderId) {
                 console.log("User redeemed:", rewardId, orderId);
+                fetch('/approve-reward', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ reward_id: rewardId })
+                }).then(() => console.log("Reward approved on server.")).catch(() => alert("An error occurred."));
               }
             }
           );
