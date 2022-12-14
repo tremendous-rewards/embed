@@ -79,6 +79,28 @@ get '/pre-created' do
   }
 end
 
+post '/approve-reward' do
+  # the only parameter needed is the reward ID
+  reward_id = JSON.parse(request.body.read)['reward_id']
+
+  # query the Tremendous API for reward details
+  reward_response = TremendousAPI.get("/rewards/#{reward_id}")
+
+  # This is a good place to ensure that the reward was actually meant to be created.
+  # Checking against the user's email address is a good practice.
+  # To get the recipient email:
+  # reward_response.parsed_response['reward']['recipient']['email']
+
+  # if everything looks good, approve the reward
+  order_id = reward_response.parsed_response['reward']['order_id']
+  response = TremendousAPI.post("/orders/#{order_id}/approve")
+  if response.ok?
+    halt 200
+  else
+    raise "Unable to approve reward"
+  end
+end
+
 post '/webhooks' do
   # The real-time implementation of the embed requires
   # an Order to be approved
