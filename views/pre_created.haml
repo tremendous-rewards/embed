@@ -36,9 +36,9 @@
               onError: function(err) {
                 console.log(err);
               },
-              onRedeem: function() {
+              onRedeem: function(rewardId, orderId) {
                 // Approval not required here, since the reward was created via the API.
-                console.log("User redeemed");
+                console.log("User redeemed:", rewardId, orderId);
               }
             }
           );
