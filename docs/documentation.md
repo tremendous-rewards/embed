@@ -21,9 +21,23 @@ In order to render the embed, you'll need to include a link to the tremendous em
 
 ## Integration
 
-### Previously created rewards
+This integration is useful when you have already created a link reward, and want the recipient to redeem on your site.
 
-This integration is useful when you have already created a link reward, and want the recipient to redeem on your site. It requires less configuration.
+The Embed flow uses reward tokens that are only valid for 24h.
+These tokens can be generated using the [generate_embed_token](https://developers.tremendous.com/reference/core-rewards-token) endpoint from the Tremendous API.
+
+As an example on how to fetch a token, you can navigate to [app.rb](https://github.com/tremendous-rewards/embed/blob/master/app.rb) in this demo app, where you'll find:
+
+```ruby
+# Fetch a reward token to use in the Embed flow
+reward_id = created_order['rewards'].first['id']
+reward_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
+```
+
+That makes the API call in the backend, using your own API key, and fetches a new temporary token to be passed along to the frontend.
+These tokens shouldn't be permanently stored. Using a temporary token that is past its expiry date will result in an error.
+
+Once the temporary token is fetched, you can pass it to the Embed SDK to start the redeeming flow.
 
 ```html
 <div id="launchpad">Click me to redeem</div>
@@ -37,8 +51,9 @@ This integration is useful when you have already created a link reward, and want
     function redeem() {
 
       client.reward.open(
-        // Pass in the reward_id. Note that this is different from the order_id.
-        "REWARD_ID",
+        // Pass in the temporary reward token.
+        // Note that this is different from the reward_id and the order_id.
+        "REWARD_TOKEN",
         {
           onLoad: function() {
             console.log("It Loaded");
