@@ -53,12 +53,12 @@ get '/pre-created' do
 
   # Fetch a reward token to use in the Embed flow
   reward_id = created_order['rewards'].first['id']
-  reward_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
+  reward_embed_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
 
   # Render the reward using the Tremendous Embed flow
   haml :pre_created, locals: {
     tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
-    reward_token: reward_token,
+    reward_embed_token: reward_embed_token,
     created_order: JSON.pretty_generate(created_order)
   }
 end

@@ -31,7 +31,7 @@ As an example on how to fetch a token, you can navigate to [app.rb](https://gith
 ```ruby
 # Fetch a reward token to use in the Embed flow
 reward_id = created_order['rewards'].first['id']
-reward_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
+reward_embed_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
 ```
 
 That makes the API call in the backend, using your own API key, and fetches a new temporary token to be passed along to the frontend.
@@ -53,7 +53,7 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
       client.reward.open(
         // Pass in the temporary reward token.
         // Note that this is different from the reward_id and the order_id.
-        "REWARD_TOKEN",
+        "REWARD_EMBED_TOKEN",
         {
           onLoad: function() {
             console.log("It Loaded");
