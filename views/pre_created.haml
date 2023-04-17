@@ -24,8 +24,8 @@
 
         function redeem() {
           client.reward.open(
-            // reward ID.
-            "#{reward_id}",
+            // The reward embed token, fetched with the Tremendous API
+            "#{reward_embed_token}",
             {
               onLoad: function() {
                 console.log("User loaded modal");
