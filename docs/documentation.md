@@ -37,7 +37,7 @@ reward_embed_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_to
 That makes the API call in the backend, using your own API key, and fetches a new temporary token to be passed along to the frontend.
 These tokens shouldn't be permanently stored. Using a temporary token that is past its expiry date will result in an error.
 
-Once the temporary token is fetched, you can pass it to the Embed SDK to start the redeeming flow.
+Once the temporary token is fetched, you can pass it to the Embed SDK to start the redemption flow.
 
 ```html
 <div id="launchpad">Click me to redeem</div>
