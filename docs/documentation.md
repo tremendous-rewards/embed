@@ -5,8 +5,7 @@
 ### API keys
 You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
-To generate your API key, you'll navigate to Team Settings > Developers. You will need to create both an API Key and a Developer App. The `client_id` from the Developer App will be added to your client as the `TREMENDOUS_CLIENT_ID`.
-
+To generate your API key, you'll navigate to Team Settings > Developers.
 ![API Page](/images/sandbox-keys.png)
 
 Production keys are in the same place in the production environment.
@@ -15,7 +14,7 @@ Production keys are in the same place in the production environment.
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN.
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v3.1.0/client.js"/>
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v4.0.0/client.js"/>
 ```
 
 
@@ -44,7 +43,7 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function() {
-    var client = Tremendous("TREMENDOUS_CLIENT_ID", {
+    var client = Tremendous({
       domain: Tremendous.domains.SANDBOX
     });
 

@@ -16,8 +16,6 @@ Visit the [Tremendous Sandbox](https://testflight.tremendous.com) to get your AP
 
 ```sh
 $ touch .env
-$ echo TREMENDOUS_CLIENT_ID=your-client-id >> .env
-$ echo TREMENDOUS_CLIENT_SECRET=your-client-secret >> .env
 $ echo TREMENDOUS_API_KEY=your-api-key >> .env
 $ # make sure it looks right
 $ cat .env
