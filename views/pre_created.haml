@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v3.1.0/client.js"}
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/v4.0.0/client.js"}
     %title Pre-created reward example | Tremendous Embed
 
   %body
@@ -18,7 +18,7 @@
 
     :javascript
       document.addEventListener("DOMContentLoaded", function() {
-        var client = Tremendous("#{tremendous_client_id}", {
+        var client = Tremendous({
           domain: Tremendous.domains.SANDBOX
         });
 

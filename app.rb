@@ -57,7 +57,6 @@ get '/pre-created' do
 
   # Render the reward using the Tremendous Embed flow
   haml :pre_created, locals: {
-    tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
     reward_embed_token: reward_embed_token,
     created_order: JSON.pretty_generate(created_order)
   }
