@@ -1,5 +1,6 @@
+require 'bundler/setup'
 require 'sinatra'
-require "sinatra/reloader"
+require 'sinatra/reloader'
 require 'httparty'
 require 'byebug'
 require 'dotenv/load'
