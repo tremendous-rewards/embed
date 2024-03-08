@@ -2,6 +2,9 @@
 
 ## Access
 
+> [!NOTE]
+> The Embed flow requires review and approval by Tremendous. Please reach out if you're planning on integrating.
+
 ### API keys
 You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
