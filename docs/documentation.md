@@ -26,7 +26,7 @@ In order to render the embed, you'll need to include a link to the tremendous em
 This integration is useful when you have already created a link reward, and want the recipient to redeem on your site.
 
 The Embed flow uses reward tokens that are only valid for 24h.
-These tokens can be generated using the [generate_embed_token](https://developers.tremendous.com/reference/core-rewards-token) endpoint from the Tremendous API.
+These tokens can be generated using the [generate_embed_token](https://developers.tremendous.com/reference/generate-reward-token) endpoint from the Tremendous API.
 
 As an example on how to fetch a token, you can navigate to [app.rb](https://github.com/tremendous-rewards/embed/blob/master/app.rb) in this demo app, where you'll find:
 
