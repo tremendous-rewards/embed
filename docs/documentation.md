@@ -17,11 +17,11 @@ Production keys are in the same place in the production environment.
 In order to render the embed, you'll need to include a link to the tremendous embed SDK. We have a hosted version on a CDN.
 
 ```html
-<script type="text/javascript" src="https://cdn.tremendous.com/embed/v4.0.0/client.js"/>
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/v5.0.0/client.js"/>
 ```
 
 
-## Integration
+## Reward Integration
 
 This integration is useful when you have already created a link reward, and want the recipient to redeem on your site.
 
@@ -80,20 +80,55 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 </script>
 ```
 
-## Events
+### Events
 
-### `onLoad`
+#### `onLoad`
 
 Triggered when the client is successfully mounted. Passed a single config object to the handler as a parameter.
 
-### `onError`
+#### `onError`
 
 Triggered on any error within the client. An error object is passed to the handler as a parameter.
 
-### `onExit`
+#### `onExit`
 
 Triggered when the user manually closes the redemption screen or when the SDK programmatically does so through the `reward.close` method.
 
-### `onRedeem`
+#### `onRedeem`
 
 Triggered when the user confirms the redemption of the reward.
+
+
+## Claim Integration
+
+Useful to collect claimants' payment preferences for Class Action setups.
+
+Reach us out to setup your Team for Class Action, then use the snippet below to embed the Claim forms into your site.
+
+
+```html
+<div id="claim-form-placeholder">Click me to redeem</div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    var client = Tremendous({
+      domain: Tremendous.domains.SANDBOX
+    });
+    client.claimForm.open(
+      "CLASS_ACTION_CLAIM_ID",
+      "claim-form-placeholder",
+      {
+        onLoad: function() {
+          console.log("It Loaded");
+        },
+        onError: function(err) {
+          console.log(err);
+        },
+        onComplete: function(claimantId) {
+          // Payment preferences saved
+        }
+      }
+    );
+  });
+</script>
+```
