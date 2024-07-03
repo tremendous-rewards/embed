@@ -80,6 +80,103 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 </script>
 ```
 
+
+### Uncreated rewards
+
+If you have rewards that haven't been created yet, you can create them just-in-time using the SDK.
+Tremendous creates the order at the moment when your recipient makes their reward selection.
+
+If you ever need to add custom data to a reward, please check the [API documentation](https://developers.tremendous.com/reference/using-custom-fields-to-add-custom-data-to-rewards) and add `custom_fields` to the
+`reward` object as described in there.
+
+This approach requires more configuration, as rewards will have to be approved by your server.
+
+#### Create a reward in the client
+
+```html
+<div id="launchpad">Click me to redeem</div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    var client = Tremendous("TREMENDOUS_CLIENT_ID", {
+      domain: Tremendous.domains.SANDBOX
+    });
+
+    function redeem() {
+      // This payload to create a Reward in the client
+      // should mirror that used in the [REST API](https://www.tremendous.com/docs).
+
+      var order = {
+        external_id: "[Some identifier that ties to the order or the reward on your server]",
+        payment: {
+          funding_source_id: "[YOUR_FUNDING_SOURCE_ID]",
+        },
+        reward: {
+          value: {
+            denomination: 25,
+            currency_code: "USD"
+          },
+          campaign_id: "[OPTIONAL_CAMPAIGN_ID]",
+          products: "[Array of products available such as Amazon, Visa, etc. (see products REST endpoint)]",
+          recipient: {
+            name: "Recipient Name",
+            email: "recipientgoeshere@gmail.com"
+          }
+        }
+      }
+
+      client.reward.create(
+        order,
+        {
+          onLoad: function() {
+            console.log("It loaded");
+          },
+          onExit: function() {
+            console.log("It closed");
+          },
+          onError: function(err) {
+            console.log(err);
+          },
+          onRedeem: function(rewardId, orderId) {
+            console.log(`Reward redeemed: ${rewardId}. Order ID: ${orderId}`)
+          }
+        }
+      );
+
+    }
+
+    document.querySelector("a#launchpad").addEventListener("click", redeem);
+  });
+
+</script>
+```
+
+
+#### Approving rewards
+
+When a reward is generated using the "uncreated rewards" approach, execution is paused until the order is approved via the `Approve` REST endpoint. This is because the order is created by the client, and thus has the ability to be spoofed or modified before being sent to the Tremendous servers.
+
+To fulfill the reward, there are two possible approaches:
+
+##### Using the `onRedeem` callback (recommended)
+
+1. Capture the `rewardId` received on the `onRedeem` callback that you provided to `client.reward.create`, which is triggered after the user redeems the reward, and send it to your server.
+2. On the server, make a `GET` request to the [rewards endpoint](https://developers.tremendous.com/reference/core-rewards-show) using the `rewardId`.
+3. Validate that the user is entitled to the reward checking the response payload.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the `order_id` from the response payload.
+
+##### Using Webhooks
+
+1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
+2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
+3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`. Ensure that the email, reward amounts, and external_id are correct.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the Order ID in `payload.resource.id`
+
+#### Preventing Duplication
+
+Each order and reward should be associated with some unique identifier in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
+
+
 ## Events
 
 ### `onLoad`
