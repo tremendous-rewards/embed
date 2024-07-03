@@ -5,6 +5,7 @@ require 'httparty'
 require 'byebug'
 require 'dotenv/load'
 require 'securerandom'
+require 'jwt'
 
 # Tiny wrapper around the Tremendous API.
 class TremendousAPI
@@ -18,25 +19,6 @@ end
 # Homepage
 get '/' do
   haml :home
-end
-
-# Demonstrates a reward that gets created in real time when the recipient
-# chooses an option.
-# These gifts require approval.
-get '/real-time' do
-  funding_source_id = TremendousAPI.get("/funding_sources").parsed_response['funding_sources'].first['id']
-  product_ids = TremendousAPI.get("/products").parsed_response['products'].map{|p| p['id']}
-  campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
-
-  my_external_id = SecureRandom.hex
-
-  haml :real_time, locals: {
-    tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
-    funding_source_id: funding_source_id,
-    product_ids: product_ids,
-    campaign_id: campaign_id,
-    my_external_id: my_external_id
-  }
 end
 
 # This endpoint demonstrates rendering a reward for redemption
@@ -57,8 +39,8 @@ get '/pre-created' do
       },
       products: product_ids,
       recipient: {
-        name: "Kapil Kale",
-        email: "kapil@tremendous.com"
+        name: "Foo Bar",
+        email: "foo@bar.com"
       },
       delivery: {
         # Since we're hosting the redemption experience ourselves.
@@ -71,7 +53,7 @@ get '/pre-created' do
   response = TremendousAPI.post("/orders", body: order)
   created_order = response.parsed_response['order']
 
-  # Fetch a reward token to use in the Embed flow
+  # Fetch a reward token to use in the Embed flow (4.0.0)
   reward_id = created_order['rewards'].first['id']
   reward_embed_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
 
@@ -79,6 +61,65 @@ get '/pre-created' do
   haml :pre_created, locals: {
     reward_embed_token: reward_embed_token,
     created_order: JSON.pretty_generate(created_order)
+  }
+end
+
+# (DEPRECATED) See the `real-time-jwt`` example instead.
+# These gifts require approval.
+get '/real-time' do
+  funding_source_id = TremendousAPI.get("/funding_sources").parsed_response['funding_sources'].first['id']
+  product_ids = TremendousAPI.get("/products").parsed_response['products'].map{|p| p['id']}
+  campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
+
+  my_external_id = SecureRandom.hex
+
+  haml :real_time, locals: {
+    tremendous_client_id: ENV['TREMENDOUS_CLIENT_ID'],
+    funding_source_id: funding_source_id,
+    product_ids: product_ids,
+    campaign_id: campaign_id,
+    my_external_id: my_external_id
+  }
+end
+
+# This endpoint demonstrates rendering a reward for redemption that will be
+# created in real-time. You need to encode the payload as a JWT token and sign
+# it with an RSA private key. The public key must be uploaded via the APi so we
+# can authorize your request.
+# These gifts require approval.
+get '/real-time-jwt' do
+  funding_source_id = TremendousAPI.get("/funding_sources").parsed_response['funding_sources'].first['id']
+  public_key_id = TremendousAPI.get("/public_keys").parsed_response['public_keys'].last['id']
+  campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
+
+  # Instantiate an OpenSSL RSA private key object
+  private_key = OpenSSL::PKey::RSA.new(File.read('tremendous_key.pem'))
+
+  # Use the private key object to encode the whole payload and sign it
+  jwt = JWT.encode({
+    countries: ["US"],
+    external_id: "#{SecureRandom.hex}",
+    payment: {
+      funding_source_id: funding_source_id,
+    },
+    reward: {
+      campaign_id: campaign_id,
+      value: {
+        denomination: 10,
+        currency_code: "USD"
+      },
+      recipient: {
+        name: "Foo Bar",
+        email: "foo@bar.com"
+      }
+    }
+  }, private_key, 'RS256')
+
+  # And inject both the public key pair ID (you can GET from `api/v2/public_keys`)
+  # and the JWT you just encoded when rendering the front-end app.
+  haml :real_time_jwt, locals: {
+    key_id: public_key_id,
+    jwt: jwt
   }
 end
 
