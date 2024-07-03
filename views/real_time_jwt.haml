@@ -7,39 +7,25 @@
   %body
     %a{href: "/"} Home
     %h1 Embed for an uncreated reward
-    %p This demonstrates the flow for a reward that hasn't been created yet. The reward is created in real-time via the embed after the recipient redeems. It requires approval by your application and will be deprecated in version 5.0.0.
+    %p This demonstrates the flow for a reward that hasn't been created yet. The reward is created in real-time via the embed after the recipient redeems. It requires approval by your application.
 
     %a#launchpad{href: '#'}
       Click me to redeem
 
     :javascript
       document.addEventListener("DOMContentLoaded", function() {
-        var client = Tremendous("#{tremendous_client_id}", {
+        var client = Tremendous({
           domain: Tremendous.domains.SANDBOX,
         });
 
         function redeem() {
-          // This payload to create a Reward in the client
-          // should mirror that used in the [REST API](https://www.tremendous.com/docs).
+          // You should upload an RSA public key and use its ID here.
+          // The JWT should be signed with the corresponding private key.
+          // Its encoded contents should mirror the same "Order" object that's
+          // used in the [REST API](https://www.tremendous.com/docs).
           var order = {
-            countries: ["US"],
-            // Note: the external_id below serves as an idempotency token.
-            // Two orders cannot be created with the same external_id
-            external_id: "#{my_external_id}",
-            payment: {
-              funding_source_id: "#{funding_source_id}",
-            },
-            reward: {
-              value: {
-                denomination: 25,
-                currency_code: "USD"
-              },
-              campaign_id: "#{campaign_id}",
-              recipient: {
-                name: "Foo Bar",
-                email: "foo-bar@example.com"
-              }
-            }
+            key_id: "#{key_id}", // So we can verify your identity
+            jwt: "#{jwt}", // So we can decode the order
           }
 
           client.reward.create(
