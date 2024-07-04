@@ -1,0 +1,72 @@
+!!!
+%html
+  %head
+    %script{type: "text/javascript", src: "https://cdn.tremendous.com/embed/4.1.0/client.js"}
+    %title Reward created in real-time example | Tremendous Embed
+
+  %body
+    %a{href: "/"} Home
+    %h1 Embed for an uncreated reward
+    %p This demonstrates the flow for a reward that hasn't been created yet. The reward is created in real-time via the embed after the recipient redeems. It requires approval by your application and will be deprecated in version 5.0.0.
+
+    %a#launchpad{href: '#'}
+      Click me to redeem
+
+    :javascript
+      document.addEventListener("DOMContentLoaded", function() {
+        var client = Tremendous("#{tremendous_client_id}", {
+          domain: Tremendous.domains.SANDBOX,
+        });
+
+        function redeem() {
+          // This payload to create a Reward in the client
+          // should mirror that used in the [REST API](https://www.tremendous.com/docs).
+          var order = {
+            countries: ["US"],
+            // Note: the external_id below serves as an idempotency token.
+            // Two orders cannot be created with the same external_id
+            external_id: "#{my_external_id}",
+            payment: {
+              funding_source_id: "#{funding_source_id}",
+            },
+            reward: {
+              value: {
+                denomination: 25,
+                currency_code: "USD"
+              },
+              campaign_id: "#{campaign_id}",
+              recipient: {
+                name: "Foo Bar",
+                email: "foo-bar@example.com"
+              }
+            }
+          }
+
+          client.reward.create(
+            order,
+            {
+              onLoad: function() {
+                console.log("User loaded modal");
+              },
+              onExit: function() {
+                console.log("User exited modal");
+              },
+              onError: function(err) {
+                console.log(err);
+              },
+              onRedeem: function(rewardId, orderId) {
+                console.log("User redeemed:", rewardId, orderId);
+                fetch('/approve-reward', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ reward_id: rewardId })
+                }).then(() => console.log("Reward approved on server.")).catch(() => alert("An error occurred."));
+              }
+            }
+          );
+
+        }
+        document.querySelector("a#launchpad").addEventListener("click", redeem);
+      });

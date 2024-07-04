@@ -14,3 +14,5 @@ gem 'byebug'
 
 # Load environment variables
 gem 'dotenv'
+
+gem 'jwt'
