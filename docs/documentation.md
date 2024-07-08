@@ -85,7 +85,7 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 
 If you have rewards that have yet to be created, you can create them just-in-time using the Embed SDK. Tremendous creates the order at the moment when your recipient makes their reward selection.
 
-This approach requires more configuration, as you must create a pair of asymmetric keys and encode your payload. You encode your order payload as an RS256 JWT and sign it with your private key. Tremendous verifies the payload using your public key.
+This approach requires more configuration, as you must create a pair of asymmetric key, encode your payload, and [approve the order](https://developers.tremendous.com/reference/approve-order). You encode your order payload as an RS256 JWT and sign it with your private key. Tremendous verifies the payload using your public key.
 
 You can update your public key using the [public_keys](https://developers.tremendous.com/reference/create-public-key) endpoint from the Tremendous API.
 
@@ -164,6 +164,26 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 
 </script>
 ````
+
+#### Approving rewards
+
+When a reward is generated using the "uncreated rewards" approach, execution is paused until the order is approved via the `approve` REST endpoint.
+
+To fulfill the reward, there are two possible approaches:
+
+##### Using the `onRedeem` callback (recommended)
+
+1. Capture the `rewardId` received on the `onRedeem` callback that you provided to `client.reward.create`, which is triggered after the user redeems the reward, and send it to your server.
+2. On the server, make a `GET` request to the [rewards endpoint](https://developers.tremendous.com/reference/core-rewards-show) using the `rewardId`.
+3. Validate that the user is entitled to the reward checking the response payload.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the `order_id` from the response payload.
+
+##### Using Webhooks
+
+1. [Create a webhook](https://developers.tremendous.com/reference/post_webhooks) to get notified when an order is placed
+2. Wait for a `POST` request with an `ORDERS.CREATED` event in your [webhook](https://developers.tremendous.com/reference/webhooks-1#webhook-requests) endpoint
+3. Validate that the user is entitled to the reward checking the information in `payload.meta.rewards`.
+4. Issue a `POST` request to the [Order Approve endpoint](https://developers.tremendous.com/reference/core-orders-approve) using the Order ID in `payload.resource.id`
 
 #### Adding custom fields
 
