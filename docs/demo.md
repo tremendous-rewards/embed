@@ -1,6 +1,6 @@
 # Demo Application - Tremendous Embed
 
-Included is a small Ruby application showcasing the embed.
+Included is a small Ruby 2.7.5 application showcasing the embed.
 
 ## Setup
 
