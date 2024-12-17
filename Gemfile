@@ -16,3 +16,6 @@ gem 'byebug'
 gem 'dotenv'
 
 gem 'jwt'
+
+gem "rackup", "~> 2.2"
+gem "puma", "~> 6.5"

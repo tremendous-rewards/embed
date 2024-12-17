@@ -1,6 +1,6 @@
 # Demo Application - Tremendous Embed
 
-Included is a small Ruby 2.7.5 application showcasing the embed.
+Included is a small Ruby 3.3.6 application showcasing the embed.
 
 ## Setup
 
@@ -23,7 +23,7 @@ $ cat .env
 
 3. Install dependencies
 
-Make sure you have Ruby 2.7.5 installed, or [add it using these instructions](https://www.ruby-lang.org/en/documentation/installation/).
+Make sure you have Ruby 3.3.6 installed, or [add it using these instructions](https://www.ruby-lang.org/en/documentation/installation/).
 
 Then:
 
