@@ -23,7 +23,7 @@ $ cat .env
 
 3. Install dependencies
 
-Make sure you have Ruby installed, or [add it using these instructions](https://www.ruby-lang.org/en/documentation/installation/).
+Make sure you have Ruby 2.7.5 installed, or [add it using these instructions](https://www.ruby-lang.org/en/documentation/installation/).
 
 Then:
 
