@@ -20,10 +20,7 @@ Production keys are in the same place in the production environment.
 In order to render the embed, you'll need to include a link to the Tremendous Embed SDK. We have a hosted version on a CDN.
 
 ```html
-<script
-  type="text/javascript"
-  src="https://cdn.tremendous.com/embed/4.1.0/client.js"
-/>
+<script type="text/javascript" src="https://cdn.tremendous.com/embed/4.1.0/client.js"/>
 ```
 
 ## Integration
@@ -38,9 +35,9 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
 <div id="launchpad">Click me to redeem</div>
 
 <script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function() {
     var client = Tremendous({
-      domain: Tremendous.domains.SANDBOX,
+      domain: Tremendous.domains.SANDBOX
     });
 
     function redeem() {
@@ -49,18 +46,18 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
         // Note that this is different from the reward_id and the order_id.
         "REWARD_EMBED_TOKEN",
         {
-          onLoad: function () {
+          onLoad: function() {
             console.log("Loaded");
           },
-          onExit: function () {
+          onExit: function() {
             console.log("Closed");
           },
-          onError: function (err) {
+          onError: function(err) {
             console.log(err);
           },
-          onRedeem: function (rewardId, orderId) {
+          onRedeem: function(rewardId, orderId) {
             console.log("Redeemed", rewardId, orderId);
-          },
+          }
         }
       );
     }
@@ -117,9 +114,9 @@ That generates a RS256 signed JWT token to be passed along to the frontend. Once
 <div id="launchpad">Click me to redeem</div>
 
 <script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function() {
     var client = Tremendous({
-      domain: Tremendous.domains.SANDBOX,
+      domain: Tremendous.domains.SANDBOX
     });
 
     function redeem() {
@@ -131,18 +128,18 @@ That generates a RS256 signed JWT token to be passed along to the frontend. Once
       };
 
       client.reward.create(order, {
-        onLoad: function () {
+        onLoad: function() {
           console.log("Loaded");
         },
-        onExit: function () {
+        onExit: function()) {
           console.log("Closed");
         },
-        onError: function (err) {
+        onError: function(err) {
           console.log(err);
         },
-        onRedeem: function (rewardId, orderId) {
+        onRedeem: function(rewardId, orderId) {
           console.log("Redeemed", rewardId, orderId);
-        },
+        }
       });
     }
 
@@ -177,7 +174,7 @@ If you ever need to add custom data to a reward, check the [API documentation](h
 
 #### Preventing duplication
 
-Each order and reward should be associated with some unique identifier in your backend datastore. We would _strongly_ recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce the uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
+Each order and reward should be associated with some unique identifier in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce the uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
 
 ## Events
 
