@@ -6,6 +6,7 @@
 > The embed flow requires review and approval by Tremendous. Please reach out if you're planning on integrating.
 
 ### API keys
+
 You can get started immediately with your integration using our sandbox environment. First, sign up to the [Tremendous Sandbox Environment](https://testflight.tremendous.com).
 
 To generate your API key, you'll navigate to Team Settings > Developers.
@@ -15,29 +16,18 @@ To generate your API key, you'll navigate to Team Settings > Developers.
 Production keys are in the same place in the production environment.
 
 ## Required scripts
+
 In order to render the embed, you'll need to include a link to the Tremendous Embed SDK. We have a hosted version on a CDN.
 
 ```html
 <script type="text/javascript" src="https://cdn.tremendous.com/embed/4.1.0/client.js"/>
 ```
 
-
 ## Integration
+
 This integration is useful when you have already created a link reward, and want the recipient to redeem on your site.
 
-The embed flow uses reward tokens that are only valid for 24h.
-These tokens can be generated using the [generate_embed_token](https://developers.tremendous.com/reference/generate-reward-token) endpoint from the Tremendous API.
-
-As an example on how to fetch a token, you can navigate to [app.rb](https://github.com/tremendous-rewards/embed/blob/master/app.rb) in this demo app, where you'll find:
-
-```ruby
-# Fetch a reward token to use in the Embed flow
-reward_id = created_order['rewards'].first['id']
-reward_embed_token = TremendousAPI.post("/rewards/#{reward_id}/generate_embed_token").dig('reward', 'token')
-```
-
-That makes the API call in the backend, using your own API key, and fetches a new temporary token to be passed along to the frontend.
-These tokens shouldn't be permanently stored. Using a temporary token that is past its expiry date will result in an error.
+The embed flow uses reward tokens that are only valid for 24h. These tokens can be generated using the [generate_embed_token](https://developers.tremendous.com/reference/generate-reward-token) endpoint from the Tremendous API. It fetches a new temporary token to be passed along to the frontend. These tokens shouldn't be permanently stored. Using a temporary token that is past its expiry date will result in an error.
 
 Once the temporary token is fetched, you can pass it to the Embed SDK to start the redemption flow.
 
@@ -51,7 +41,6 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
     });
 
     function redeem() {
-
       client.reward.open(
         // Pass in the temporary reward token.
         // Note that this is different from the reward_id and the order_id.
@@ -67,19 +56,16 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
             console.log(err);
           },
           onRedeem: function(rewardId, orderId) {
-            console.log("Redeemed", rewardId, orderId)
+            console.log("Redeemed", rewardId, orderId);
           }
         }
       );
-
     }
 
     document.querySelector("a#launchpad").addEventListener("click", redeem);
   });
-
 </script>
 ```
-
 
 ### Uncreated rewards
 
@@ -91,36 +77,38 @@ You can update your public key using the [public_keys](https://developers.tremen
 
 #### Create a reward in the client
 
-As an example of how to encode your payload, you can navigate to [app.rb](https://github.com/tremendous-rewards/embed/blob/master/app.rb) in this demo app, where you'll find:
+You can do something like this to encode your payload (rails example):
 
 ```ruby
-# Instantiate an OpenSSL RSA private key object
-private_key = OpenSSL::PKey::RSA.new(File.read('private_key.pem'))
+  funding_source_id = TremendousAPI.get("/funding_sources").parsed_response['funding_sources'].first['id']
+  public_key_id = TremendousAPI.get("/public_keys").parsed_response['public_keys'].last['id']
+  campaign_id = TremendousAPI.get("/campaigns").parsed_response['campaigns'].first['id']
 
-# Use the private key instance to encode the payload
-jwt = JWT.encode({
-  countries: ["US"],
-  external_id: "#{SecureRandom.hex}",
-  payment: {
-    funding_source_id: funding_source_id,
-  },
-  reward: {
-    campaign_id: campaign_id,
-    value: {
-      denomination: 10,
-      currency_code: "USD"
+  # Instantiate an OpenSSL RSA private key object
+  private_key = OpenSSL::PKey::RSA.new(File.read('tremendous_key.pem'))
+
+  # Use the private key object to encode the whole payload and sign it
+  jwt = JWT.encode({
+    countries: ["US"],
+    external_id: "#{SecureRandom.hex}",
+    payment: {
+      funding_source_id: funding_source_id,
     },
-    recipient: {
-      name: "Foo Bar",
-      email: "foo@bar.com"
+    reward: {
+      campaign_id: campaign_id,
+      value: {
+        denomination: 10,
+        currency_code: "USD"
+      },
+      recipient: {
+        name: "Foo Bar",
+        email: "foo@bar.com"
+      }
     }
-  }
-}, private_key, 'RS256')
+  }, private_key, 'RS256')
 ```
 
-That generates a RS256 signed JWT token to be passed along to the frontend.
-
-Once the temporary token is fetched, you can pass it to the Embed SDK to start the redemption flow.
+That generates a RS256 signed JWT token to be passed along to the frontend. Once the temporary token is fetched, you can pass it to the Embed SDK to start the redemption flow:
 
 ```html
 <div id="launchpad">Click me to redeem</div>
@@ -136,34 +124,29 @@ Once the temporary token is fetched, you can pass it to the Embed SDK to start t
       // used in the [REST API](https://www.tremendous.com/docs).
       var order = {
         key_id: "[YOUR_PUBLIC_KEY_ID]",
-        jwt: "[Order payload, JWT encoded, and signed with your private key]"
-      }
+        jwt: "[Order payload, JWT encoded, and signed with your private key]",
+      };
 
-      client.reward.create(
-        order,
-        {
-          onLoad: function() {
-            console.log("Loaded");
-          },
-          onExit: function() {
-            console.log("Closed");
-          },
-          onError: function(err) {
-            console.log(err);
-          },
-          onRedeem: function(rewardId, orderId) {
-            console.log("Redeemed", rewardId, orderId)
-          }
+      client.reward.create(order, {
+        onLoad: function() {
+          console.log("Loaded");
+        },
+        onExit: function()) {
+          console.log("Closed");
+        },
+        onError: function(err) {
+          console.log(err);
+        },
+        onRedeem: function(rewardId, orderId) {
+          console.log("Redeemed", rewardId, orderId);
         }
-      );
-
+      });
     }
 
     document.querySelector("a#launchpad").addEventListener("click", redeem);
   });
-
 </script>
-````
+```
 
 #### Approving rewards
 
@@ -192,7 +175,6 @@ If you ever need to add custom data to a reward, check the [API documentation](h
 #### Preventing duplication
 
 Each order and reward should be associated with some unique identifier in your backend datastore. We would *strongly* recommend passing in a unique `external_id` for each created order that ties to that identifier. We enforce the uniqueness of `external_id` for all orders, which prevents duplicate redemptions.
-
 
 ## Events
 
