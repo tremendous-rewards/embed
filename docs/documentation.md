@@ -89,7 +89,6 @@ You can do something like this to encode your payload (rails example):
 
   # Use the private key object to encode the whole payload and sign it
   jwt = JWT.encode({
-    countries: ["US"],
     external_id: "#{SecureRandom.hex}",
     payment: {
       funding_source_id: funding_source_id,
